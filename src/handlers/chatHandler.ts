@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import logger from "../config/logger";
 import ChatService from "../service/chatService";
+import { CustomError } from "../errors/customError";
+import errorCodes from "../constants/error-codes.json";
 class ChatHandler {
   private chatService = new ChatService();
   public getChatList = async (
@@ -37,7 +39,14 @@ class ChatHandler {
     });
     try {
       const targetUserId = req.body.targetUserId;
-      const userId = res.locals.userInfo.userId;
+      const userId = res.locals.userInfo?.userId;
+      if (!userId) {
+        throw new CustomError(
+          errorCodes.AUTH.UNAUTHORIZED.status,
+          errorCodes.AUTH.UNAUTHORIZED.code,
+          "현재 로그인하지 않았습니다.",
+        );
+      }
 
       const result = await this.chatService.createChatRoom({
         userId,

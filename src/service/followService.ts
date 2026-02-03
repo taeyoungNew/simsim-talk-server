@@ -30,7 +30,7 @@ class FollowService {
       const targetUser = await this.userService.findUserById(
         params.followingId,
       );
-
+      await this.isFollowingMe(params.userId, params.followingId);
       // 이미 팔로잉하고있는지
       await this.checkFollowingUser(params);
       const followingResult = await this.followRepository.following(params);
@@ -176,6 +176,20 @@ class FollowService {
         );
     } catch (e) {
       throw e;
+    }
+  };
+
+  public isFollowingMe = async (myId: string, targetId: string) => {
+    try {
+      if (myId === targetId) {
+        throw new CustomError(
+          errorCodes.FOLLOW.BAD_REQUEST.status,
+          errorCodes.FOLLOW.BAD_REQUEST.code,
+          "자기자신을 팔로잉할수 없습니다.",
+        );
+      }
+    } catch (error) {
+      throw error;
     }
   };
 }
