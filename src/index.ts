@@ -18,9 +18,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
-app.use(cors({ origin: process.env.FRONT_CORS, credentials: true }));
+app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(json());
@@ -34,7 +34,7 @@ app.use(
     skip: function (req, res) {
       return res.statusCode < 400;
     },
-  })
+  }),
 );
 app.use(morganMiddleware);
 

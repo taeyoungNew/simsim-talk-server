@@ -4,7 +4,7 @@ let io: Server;
 export const initSocketServer = (httpServer: any) => {
   io = new Server(httpServer, {
     cors: {
-      origin: `${process.env.FRONT_CORS}`,
+      origin: `${process.env.CORS_ORIGIN}`,
       methods: ["GET", "POST"],
       credentials: true,
     },
