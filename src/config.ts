@@ -4,6 +4,7 @@ dotenv.config({ path: `.env` });
 
 export const {
   PORT,
+  MYSQL_URL,
   DB_USERNAME,
   DB_PASSWORD,
   DB_HOST,

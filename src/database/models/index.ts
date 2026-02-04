@@ -1,5 +1,5 @@
 "use strict";
-
+import { MYSQL_URL } from "../../config";
 import config from "../sequelize.config";
 import sequelizeConnection from "../connection";
 import Users from "./users";
@@ -19,12 +19,19 @@ const Sequelize = require("sequelize");
 const db: any = {};
 let sequelize;
 
-sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  config
-);
+if (MYSQL_URL) {
+  sequelize = new Sequelize(MYSQL_URL, {
+    dialect: "mysql",
+    logging: false,
+  });
+} else {
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config,
+  );
+}
 
 db.Users = Users.initModel(sequelizeConnection);
 db.UserInfos = UserInfos.initModel(sequelizeConnection);
