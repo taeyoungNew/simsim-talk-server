@@ -18,7 +18,7 @@ const config = MYSQL_URL
       password: DB_PASSWORD,
       database: DB_DATABASE,
       host: DB_HOST,
-      port: DB_PORT,
+      port: Number(DB_PORT),
       dialect: DB_DIALECT, // Sequelize.Dialect 타입 지정 가능
     };
 
