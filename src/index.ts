@@ -55,5 +55,10 @@ server.listen(PORT, () => {
     Object.keys(process.env).filter((v) => v.includes("REDIS")),
   );
 
+  console.log(
+    "ENV CHECK",
+    Object.keys(process.env).filter((v) => v.includes("DB_DATABASE")),
+  );
+
   logger.info("심심톡 실행 PORT: ${PORT}");
 });
