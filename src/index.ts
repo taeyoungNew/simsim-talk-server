@@ -50,7 +50,10 @@ const server = http.createServer(app);
 setupSocket(server);
 
 server.listen(PORT, () => {
-  console.log("REDIS_URL = ", process.env.REDIS_URL);
+  console.log(
+    "ENV CHECK",
+    Object.keys(process.env).filter((v) => v.includes("REDIS")),
+  );
 
   logger.info("심심톡 실행 PORT: ${PORT}");
 });
