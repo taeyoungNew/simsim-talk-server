@@ -9,8 +9,8 @@ export const accessToken = (userId: string, email: string) => {
       { userId, email },
       process.env.SECRET_ACCTOKEN_KEY,
       {
-        expiresIn: process.env.ACCTOKEN_EXPIRA,
-      }
+        expiresIn: process.env.ACCTOKEN_EXPIRE,
+      },
     );
     return accToken;
   } catch (error) {
