@@ -55,6 +55,7 @@ setupSocket(server);
 
 server.listen(PORT, () => {
   console.log("REDIS_URL = ", process.env.REDIS_URL);
+  console.log("DB_PORT = ", process.env.DB_PORT);
 
   console.log(
     "ENV CHECK",
