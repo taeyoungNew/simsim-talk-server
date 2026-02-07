@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 
 // accToken생성
 export const accessToken = (userId: string, email: string) => {
-  dotenv.config();
+  // dotenv.config();
   try {
     const accToken = jwt.sign(
       { userId, email },

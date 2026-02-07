@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { socketLogin, socketLogout } from "./emitters/auth";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 import { joinChatRoom, leaveChatRoom } from "./emitters/chat";
 import { emitSendMessage } from "./emitters/message";
 import { getChatHistory } from "./emitters/message";
@@ -17,7 +17,7 @@ import { initSocketServer } from "./socket.server";
 import { onlineUsers } from "./onlineUsers.store";
 import { isUserOnline } from "./onlineUsers.service";
 
-dotenv.config();
+// dotenv.config();
 
 export const setupSocket = (server: any) => {
   const socketIdToUserId = new Map<string, string>();

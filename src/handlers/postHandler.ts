@@ -7,7 +7,7 @@ import {
   IsUserPost,
   GetPostDetailDto,
 } from "../dtos/PostDto";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 import { postTitleExp, postContentExp } from "../common/validators/postExp";
 import PostService from "../service/postService";
 import logger from "../config/logger";
@@ -17,7 +17,7 @@ import { userPostsCache } from "../common/cacheLocal/userPostsCache";
 import { CustomError } from "../errors/customError";
 import errorCodes from "../constants/error-codes.json";
 import FollowService from "../service/followService";
-dotenv.config();
+// dotenv.config();
 class PostHandler {
   postService = new PostService();
   followService = new FollowService();
