@@ -17,21 +17,6 @@ import Alarms from "./alarms";
 
 const Sequelize = require("sequelize");
 const db: any = {};
-// let sequelize;
-
-// if (MYSQL_URL) {
-//   sequelize = new Sequelize(MYSQL_URL, {
-//     dialect: "mysql",
-//     logging: false,
-//   });
-// } else {
-//   sequelize = new Sequelize(
-//     config.database,
-//     config.username,
-//     config.password,
-//     config,
-//   );
-// }
 
 const sequelize = sequelizeConnection;
 

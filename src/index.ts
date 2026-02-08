@@ -19,11 +19,8 @@ if (process.env.NODE_ENV !== "production") {
   dotenv.config();
 }
 
-// dotenv.config();
-
 const app = express();
 const PORT = process.env.PORT || 3001;
-
 app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -54,6 +51,7 @@ const server = http.createServer(app);
 setupSocket(server);
 
 server.listen(PORT, () => {
+  console.log("ALL ENV KEYS:", Object.keys(process.env));
   console.log("REDIS_URL = ", process.env.REDIS_URL);
   console.log("DB_PORT = ", process.env.DB_PORT);
 
