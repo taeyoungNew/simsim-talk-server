@@ -21,6 +21,8 @@ if (process.env.NODE_ENV !== "production") {
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+console.log("start");
+
 // app.use(cors({ origin: process.env.LOCAL_CORS_ORIGIN, credentials: true }));
 const allowedOrigins = [
   "http://localhost:5173",
@@ -70,7 +72,6 @@ app.use(errorHandler);
 const server = http.createServer(app);
 
 setupSocket(server);
-console.log("🔥 SOCKET CORS VERSION 2");
 server.listen(PORT, () => {
-  logger.info("심심톡 실행 PORT: ${PORT}");
+  logger.info(`심심톡 실행 PORT: ${PORT}`);
 });
