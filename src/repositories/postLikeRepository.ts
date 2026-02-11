@@ -50,7 +50,7 @@ class PostLikeRepository {
       functionName: "getIsLikedPostIds",
     });
     // log;
-    return PostLikes.findAll({
+    return await PostLikes.findAll({
       attributes: ["postId"],
       where: {
         userId: param,
@@ -65,7 +65,7 @@ class PostLikeRepository {
       className: "PostLikeRepository",
       functionName: "postLikeCnt",
     });
-    return PostLikes.findAll({
+    return await PostLikes.findAll({
       attributes: [],
       where: {
         userId: params.userId,
@@ -79,7 +79,7 @@ class PostLikeRepository {
       className: "PostLikeRepository",
       functionName: "existPostLike",
     });
-    return PostLikes.findOne({
+    return await PostLikes.findOne({
       where: {
         userId: params.userId,
         postId: params.postId,
