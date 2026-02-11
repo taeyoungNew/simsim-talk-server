@@ -70,7 +70,7 @@ app.use(errorHandler);
 const server = http.createServer(app);
 
 setupSocket(server);
-
+console.log("🔥 SOCKET CORS VERSION 2");
 server.listen(PORT, () => {
   logger.info("심심톡 실행 PORT: ${PORT}");
 });
