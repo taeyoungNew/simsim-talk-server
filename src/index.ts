@@ -21,7 +21,6 @@ if (process.env.NODE_ENV !== "production") {
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-console.log("start");
 
 // app.use(cors({ origin: process.env.LOCAL_CORS_ORIGIN, credentials: true }));
 const allowedOrigins = [

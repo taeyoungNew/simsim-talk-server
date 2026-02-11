@@ -134,7 +134,7 @@ class PostHandler {
         className: "PostHandler",
         functionName: "getAllPosts",
       });
-
+      console.time("after-db");
       const postLastId = Number(req.query.postLastId);
 
       const userId = res.locals.userInfo?.userId;
@@ -177,6 +177,7 @@ class PostHandler {
 
         const posts = postJsons.map((post) => JSON.parse(post));
         const isLast = posts.length < 5 ? true : false;
+        console.timeEnd("after-db");
         return res
           .status(200)
           .json({ posts, isLast, isLikedPostIds, isFollowingedUserIds });
