@@ -151,9 +151,12 @@ class PostHandler {
           userId,
         });
       }
+
+      console.timeEnd("after-db");
       // 첫랜더링
       if (ids.length === 0) {
         result = await this.postService.getAllPosts(userId);
+        console.log("get all posts = ", result);
 
         await this.cachePosts(result);
         let posts;
@@ -177,7 +180,7 @@ class PostHandler {
 
         const posts = postJsons.map((post) => JSON.parse(post));
         const isLast = posts.length < 5 ? true : false;
-        console.timeEnd("after-db");
+
         return res
           .status(200)
           .json({ posts, isLast, isLikedPostIds, isFollowingedUserIds });
