@@ -166,6 +166,14 @@ class PostHandler {
           return res
             .status(200)
             .json({ posts, isLast, isLikedPostIds, isFollowingedUserIds });
+        } else {
+          // ✨ 데이터가 없을 때도 응답을 보내야 함!
+          return res.status(200).json({
+            posts: [],
+            isLast: true,
+            isLikedPostIds: [],
+            isFollowingedUserIds: [],
+          });
         }
       } else {
         // 두번째랜더링
