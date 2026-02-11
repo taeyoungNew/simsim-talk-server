@@ -21,7 +21,28 @@ if (process.env.NODE_ENV !== "production") {
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
+// app.use(cors({ origin: process.env.LOCAL_CORS_ORIGIN, credentials: true }));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://simsim-talk-client.vercel.app",
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(json());
@@ -51,19 +72,5 @@ const server = http.createServer(app);
 setupSocket(server);
 
 server.listen(PORT, () => {
-  console.log("ALL ENV KEYS:", Object.keys(process.env));
-  console.log("REDIS_URL = ", process.env.REDIS_URL);
-  console.log("DB_PORT = ", process.env.DB_PORT);
-
-  console.log(
-    "ENV CHECK",
-    Object.keys(process.env).filter((v) => v.includes("REDIS")),
-  );
-
-  console.log(
-    "ENV CHECK",
-    Object.keys(process.env).filter((v) => v.includes("DB_DATABASE")),
-  );
-
   logger.info("심심톡 실행 PORT: ${PORT}");
 });
