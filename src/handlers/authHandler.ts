@@ -61,8 +61,9 @@ class AuthHandler {
 
       // accToken쿠기에 담기
       res.cookie("authorization", `Bearer ${accToken}`, {
-        sameSite: "strict",
         httpOnly: true,
+        secure: true,
+        sameSite: "none",
       });
       logger.info("로그인되었습니다.", {
         status: 200,
