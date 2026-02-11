@@ -68,8 +68,6 @@ class MessageAlarmsRepository {
   };
 
   public findUnreadByUser = async (userId: string) => {
-    console.log("userId = ", userId);
-
     logger.info("", {
       layer: "Repository",
       className: "MessagealarmRepository",

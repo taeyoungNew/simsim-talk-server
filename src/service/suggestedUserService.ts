@@ -6,7 +6,6 @@ class SuggestedUserService {
     try {
       const getSuggestedUsersResult =
         await this.suggestedUserRepository.getSuggestedUsers(userId);
-      console.log("getSuggestedUsersResult = ", getSuggestedUsersResult);
 
       const getPoplarUsersResult =
         await this.suggestedUserRepository.getPopularUsers(userId);
