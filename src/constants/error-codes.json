@@ -66,6 +66,7 @@
       "code": "CHATROOM_ALREADY_EXISTS",
       "status": 401
     },
-    "NOT_FOUND": { "code": "USER_NOT_FOUND", "status": 404 }
+    "NOT_FOUND": { "code": "USER_NOT_FOUND", "status": 404 },
+    "BAD_REQUEST": { "code": "COMMON_BAD_REQUEST", "status": 400 }
   }
 }
