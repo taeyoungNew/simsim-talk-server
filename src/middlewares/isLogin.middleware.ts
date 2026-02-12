@@ -10,9 +10,11 @@ import errorCodes from "../constants/error-codes.json";
 export const isLoginMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
+    console.log("req.cookies.authorization = ", req.cookies.authorization);
+
     if (req.cookies.authorization !== undefined) {
       logger.error("현재 로그인상태입니다.", {
         method: "post",
@@ -22,7 +24,7 @@ export const isLoginMiddleware = (
       throw new CustomError(
         errorCodes.AUTH.BAD_REQUEST.status,
         errorCodes.AUTH.BAD_REQUEST.code,
-        "현재 로그인상태입니다. "
+        "현재 로그인상태입니다????. ",
       );
     }
 
