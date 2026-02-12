@@ -109,7 +109,12 @@ class AuthHandler {
       const { authorization } = req.cookies;
       const [tokenType, token] = authorization.split(" ");
       await userCache.del(`token:${token}`);
-      res.clearCookie("authorization");
+      res.cookie("authorization", "", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        expires: new Date(0),
+      });
       logger.info("로그아웃되었습니다.", {
         status: 200,
         method: "post",

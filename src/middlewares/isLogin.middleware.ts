@@ -24,7 +24,7 @@ export const isLoginMiddleware = (
       throw new CustomError(
         errorCodes.AUTH.BAD_REQUEST.status,
         errorCodes.AUTH.BAD_REQUEST.code,
-        "현재 로그인상태입니다????. ",
+        "현재 로그인상태입니다. ",
       );
     }
 
