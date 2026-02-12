@@ -20,8 +20,8 @@ class ChatRepository {
              messages.content AS lastMessagePreview,
              messages.contentType AS lastMessageType,
              messages.createdAt AS lastMessageAt
-        FROM simsim_talk.ChatRooms chatrooms
-        JOIN simsim_talk.Users users
+        FROM ChatRooms chatrooms
+        JOIN Users users
           ON users.id = 
         CASE WHEN chatrooms.userAId = :userId
         THEN chatrooms.userBId 
@@ -29,10 +29,10 @@ class ChatRepository {
          END
         JOIN UserInfos userinfos
           ON userinfos.userId = users.id
-        LEFT JOIN simsim_talk.Messages messages
+        LEFT JOIN Messages messages
           ON messages.id = (
             SELECT messages2.id
-              FROM simsim_talk.Messages messages2
+              FROM Messages messages2
              WHERE messages2.chatRoomId = chatrooms.id
              ORDER BY messages2.createdAt DESC
              LIMIT 1
