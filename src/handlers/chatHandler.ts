@@ -43,9 +43,12 @@ class ChatHandler {
         userId,
         targetUserId,
       });
-      return res
-        .status(200)
-        .json({ chatRoomId: result.chatRoomId, isNew: result.isNew });
+      return res.status(200).json({
+        createdAt: result.createdAt,
+        targetUserEmail: result.targetUserEmail,
+        chatRoomId: result.chatRoomId,
+        isNew: result.isNew,
+      });
     } catch (e) {
       next(e);
     }

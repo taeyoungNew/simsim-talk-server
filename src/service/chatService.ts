@@ -22,7 +22,7 @@ class ChatService {
   };
   public createChatRoom = async ({ userId, targetUserId }: CreateChatRoom) => {
     // 먼저 상대방이 현재 존재하는 유저인지 확인
-    await this.userService.findUserById(targetUserId);
+    const targetUserInfo = await this.userService.findUserById(targetUserId);
     await this.isSameUser(userId, targetUserId);
     const pairKey = [userId, targetUserId].sort().join("_");
 
@@ -40,6 +40,8 @@ class ChatService {
     }
 
     return {
+      createdAt: chatRoom.createdAt,
+      targetUserEmail: targetUserInfo.email,
       chatRoomId: chatRoom.id,
       isNew,
     };
