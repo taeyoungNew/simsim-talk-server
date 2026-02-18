@@ -15,7 +15,7 @@ Socket.io기반 이벤트 아키텍처로 채팅, 알람, 온라인 상태를 �
 
 # 3. Architecture / System Flow
 
-![simsimtalk.drawio.svg](attachment:888465ec-093c-4b7a-b706-75b6c87d9d8d:simsimtalk.drawio.svg)
+![Architecture](docs/architecture.svg)
 
 # 4. Key Features
 
