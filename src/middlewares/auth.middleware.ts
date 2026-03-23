@@ -48,7 +48,6 @@ export const authMiddleware = async (
 
     // acctoken이 유효한지 확인
     const decodeAccToken = verifyAccToken(accTokenPayment);
-    console.log("decodeAccToken - ", decodeAccToken);
 
     if (typeof decodeAccToken === "string" && decodeAccToken === "jwt exired") {
       logger.warn("acc토큰이 만료", {
@@ -60,7 +59,6 @@ export const authMiddleware = async (
 
       // 캐시에 저장된 userId를 가져온다
       const cacheUserInfo = await userCache.get(`token:${token}`);
-
       const cacheUserInfoParse = JSON.parse(cacheUserInfo);
 
       if (cacheUserInfoParse == null) {
@@ -89,7 +87,6 @@ export const authMiddleware = async (
       };
 
       const decodeRefToken = verifyRefToken(refTokenPayment);
-
       // refToken이 만료되었을 경우
       if (
         typeof decodeRefToken === "string" &&
@@ -130,6 +127,7 @@ export const authMiddleware = async (
         res.locals.userInfo = {
           userId: userInfo.id,
           email: userInfo.email,
+          token: newAccToken,
         };
         const newSetUserInfo = {
           id: userInfo.id,
@@ -142,7 +140,14 @@ export const authMiddleware = async (
           `token:${newAccToken}`,
           JSON.stringify(newSetUserInfo),
         );
-        res.cookie("authorization", `Bearer ${newAccToken}`);
+
+        res.cookie("authorization", `Bearer ${newAccToken}`, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 1000 * 60 * 30,
+          expires: new Date(Date.now() + 1000 * 60 * 30),
+        });
         next();
       }
     } else {

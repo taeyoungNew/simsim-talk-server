@@ -1,4 +1,5 @@
 import { Server, Socket } from "socket.io";
+import * as cookie from "cookie";
 import { socketLogin, socketLogout } from "./emitters/auth";
 // import dotenv from "dotenv";
 import { joinChatRoom, leaveChatRoom } from "./emitters/chat";
@@ -16,8 +17,8 @@ import logger from "../config/logger";
 import { initSocketServer } from "./socket.server";
 import { onlineUsers } from "./onlineUsers.store";
 import { isUserOnline } from "./onlineUsers.service";
-
-// dotenv.config();
+import verifyAccToken from "../middlewares/common/varifyAccToken";
+import { tokenType } from "../types/tokenType";
 
 export const setupSocket = (server: any) => {
   const socketIdToUserId = new Map<string, string>();
@@ -53,7 +54,6 @@ export const setupSocket = (server: any) => {
 
       if (!isUserOnline(param.userId)) {
         // 첫로그인
-
         onlineUsers.set(param.userId, {
           lastPing: Date.now(),
           socketIds: new Set([socketId]),
@@ -158,7 +158,32 @@ export const setupSocket = (server: any) => {
       }
     });
 
-    socket.on("registerOnline", ({ userId }) => {
+    socket.on("registerOnline", async ({ userId }) => {
+      const rawCookie = socket.request.headers.cookie;
+      if (!rawCookie) return;
+      const parsed = cookie.parse(rawCookie);
+
+      const auth = parsed.authorization;
+
+      if (!auth) return;
+      const [type, token] = auth.split(" ");
+      const accTokenPayment: tokenType = {
+        token: token,
+        type: "accToken",
+      };
+      const decodeToken = verifyAccToken(accTokenPayment);
+
+      if (typeof decodeToken !== "string") {
+        if (!isUserOnline(decodeToken.userId)) {
+          onlineUsers.set(decodeToken.userId, {
+            lastPing: Date.now(),
+            socketIds: new Set([socketId]),
+          });
+        }
+      }
+
+      if (socketIdToUserId.has(socket.id)) return;
+
       // socketIdToUserId에 등록
       socketIdToUserId.set(socket.id, userId);
 
@@ -200,9 +225,16 @@ export const setupSocket = (server: any) => {
       if (!onlineUserInfo) return;
 
       setTimeout(() => {
+        const latestUserId = socketIdToUserId.get(socket.id);
+        if (!latestUserId) return;
+
+        const latestUserInfo = onlineUsers.get(latestUserId);
+        if (!latestUserInfo) return;
         onlineUserInfo.socketIds.delete(socket.id);
         if (onlineUserInfo.socketIds.size === 0) {
           onlineUsers.delete(userId);
+        } else {
+          onlineUsers.set(latestUserId, latestUserInfo);
         }
         socketIdToUserId.delete(socket.id);
         broadcastOnlineUsers(socket);

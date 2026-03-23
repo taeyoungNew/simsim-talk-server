@@ -142,6 +142,7 @@ class AuthHandler {
     });
     try {
       const { authorization } = req.cookies;
+      const newcToken = res.locals.userInfo.token;
 
       if (authorization === undefined || authorization === null)
         return res.status(200).json({
@@ -149,9 +150,9 @@ class AuthHandler {
           user: null,
         });
       const [tokenType, token] = authorization.split(" ");
-
+      const cacheToken = newcToken ? newcToken : token;
       const getUserLoginInfo = JSON.parse(
-        await userCache.get(`token:${token}`),
+        await userCache.get(`token:${cacheToken}`),
       );
 
       if (getUserLoginInfo) {

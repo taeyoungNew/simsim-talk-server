@@ -23,6 +23,7 @@ const verifyAccToken = (tokenPayment: tokenType) => {
       : process.env.SECRET_REFTOKEN_KEY;
   try {
     const decoded = jwt.verify(String(token), secretKey) as AccessTokenPayload;
+
     return decoded;
   } catch (error: any) {
     if (error.name === "TokenExpiredError") {
