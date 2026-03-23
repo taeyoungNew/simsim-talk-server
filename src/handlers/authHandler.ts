@@ -9,6 +9,8 @@ import logger from "../config/logger";
 import bcrypt from "bcrypt";
 import { CustomError } from "../errors/customError";
 import errorCodes from "../constants/error-codes.json";
+import dotenv from "dotenv";
+dotenv.config();
 
 class AuthHandler {
   userService = new UserService();
@@ -64,6 +66,8 @@ class AuthHandler {
         httpOnly: true,
         secure: true,
         sameSite: "none",
+        maxAge: 1000 * 60 * 30,
+        expires: new Date(Date.now() + 1000 * 60 * 30),
       });
       logger.info("로그인되었습니다.", {
         status: 200,

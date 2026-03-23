@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 
 // refToken생성
 export const refreshToken = (userId: string, email: string) => {
-  // dotenv.config();
   const refToken = jwt.sign(
     { userId, email },
     process.env.SECRET_REFTOKEN_KEY,

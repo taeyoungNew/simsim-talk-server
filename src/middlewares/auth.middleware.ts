@@ -48,6 +48,7 @@ export const authMiddleware = async (
 
     // acctoken이 유효한지 확인
     const decodeAccToken = verifyAccToken(accTokenPayment);
+    console.log("decodeAccToken - ", decodeAccToken);
 
     if (typeof decodeAccToken === "string" && decodeAccToken === "jwt exired") {
       logger.warn("acc토큰이 만료", {

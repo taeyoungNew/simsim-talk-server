@@ -1,4 +1,5 @@
 "use strict";
+import "dotenv/config";
 import express from "express";
 import router from "./routes/index";
 import bodyParser from "body-parser";
@@ -13,16 +14,9 @@ import cors from "cors";
 import http from "http";
 import { setupSocket } from "./sockets/socket.index";
 
-import dotenv from "dotenv";
-
-if (process.env.NODE_ENV !== "production") {
-  dotenv.config();
-}
-
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// app.use(cors({ origin: process.env.LOCAL_CORS_ORIGIN, credentials: true }));
 const allowedOrigins = [
   "http://localhost:5173",
   "https://simsim-talk-client.vercel.app",

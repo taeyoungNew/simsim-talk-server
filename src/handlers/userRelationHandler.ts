@@ -1,7 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import UserRelationService from "../service/userRelationService";
 import logger from "../config/logger";
-import UserService from "../service/usersService";
 
 const userRelationService = new UserRelationService();
 class UserRelationHandler {

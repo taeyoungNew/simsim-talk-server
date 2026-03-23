@@ -7,7 +7,6 @@ import {
   DB_PORT,
 } from "../config";
 const isProd = process.env.NODE_ENV === "production";
-
 const sequelizeConnection: Sequelize = isProd
   ? new Sequelize(
       process.env.MYSQLDATABASE!,
