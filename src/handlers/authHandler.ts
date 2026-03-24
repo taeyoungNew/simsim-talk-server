@@ -65,7 +65,7 @@ class AuthHandler {
       res.cookie("authorization", `Bearer ${accToken}`, {
         httpOnly: true,
         secure: true,
-        sameSite: "none",
+        sameSite: "lax",
         maxAge: 1000 * 60 * 30,
         expires: new Date(Date.now() + 1000 * 60 * 30),
       });
