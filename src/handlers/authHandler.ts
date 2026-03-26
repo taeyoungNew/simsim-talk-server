@@ -142,7 +142,8 @@ class AuthHandler {
     });
     try {
       const { authorization } = req.cookies;
-      const newcToken = res.locals.userInfo.token;
+      const newcToken = res.locals.userInfo?.token;
+      console.log("authorization = ", authorization);
 
       if (authorization === undefined || authorization === null)
         return res.status(200).json({

@@ -45,9 +45,11 @@ class AlarmHandler {
         className: "AlarmHandler",
         functionName: "getAlarmsByUser",
       });
-      const userId = res.locals.userInfo.userId;
+      const userId = res.locals.userInfo?.userId;
 
-      const result = await this.alarmService.getAlarmsByUser(userId);
+      const result = userId
+        ? await this.alarmService.getAlarmsByUser(userId)
+        : null;
       return res.status(200).json(result);
     } catch (error) {
       next(error);

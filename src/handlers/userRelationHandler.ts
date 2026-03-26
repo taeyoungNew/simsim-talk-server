@@ -15,8 +15,11 @@ class UserRelationHandler {
       functionName: "getFriends",
     });
     try {
-      const userId = res.locals.userInfo.userId;
-      const result = await userRelationService.getFriends(userId);
+      const userId = res.locals.userInfo?.userId;
+
+      const result = userId
+        ? await userRelationService.getFriends(userId)
+        : null;
 
       return res.status(200).json(result);
     } catch (error) {
@@ -35,28 +38,32 @@ class UserRelationHandler {
       functionName: "getFollowings",
     });
     try {
-      const userId = res.locals.userInfo.userId;
-      const result = await userRelationService.getFollowings(userId);
-
-      const rows = result.map(
-        (row: {
-          id: number;
-          "following.UserInfo.profileUrl": string;
-          followingId: string;
-          "following.id": string;
-          "following.email": string;
-          "following.UserInfo.id": number;
-          "following.UserInfo.nickname": string;
-        }) => {
-          return {
-            id: row.id,
-            followingId: row.followingId,
-            profileUrl: row["following.UserInfo.profileUrl"],
-            followingEmail: row["following.email"],
-            followingNickname: row["following.UserInfo.nickname"],
-          };
-        },
-      );
+      const userId = res.locals.userInfo?.userId;
+      const result = userId
+        ? await userRelationService.getFollowings(userId)
+        : null;
+      let rows = null;
+      if (userId) {
+        rows = result.map(
+          (row: {
+            id: number;
+            "following.UserInfo.profileUrl": string;
+            followingId: string;
+            "following.id": string;
+            "following.email": string;
+            "following.UserInfo.id": number;
+            "following.UserInfo.nickname": string;
+          }) => {
+            return {
+              id: row.id,
+              followingId: row.followingId,
+              profileUrl: row["following.UserInfo.profileUrl"],
+              followingEmail: row["following.email"],
+              followingNickname: row["following.UserInfo.nickname"],
+            };
+          },
+        );
+      }
 
       return res.status(200).json({ rows });
     } catch (error) {
