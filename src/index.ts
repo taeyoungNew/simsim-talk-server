@@ -20,6 +20,7 @@ const PORT = process.env.PORT || 3001;
 const allowedOrigins = [
   "http://localhost:5173",
   "https://simsim-talk-client.vercel.app",
+  "https://simsimtalk.com",
 ];
 
 app.use(
