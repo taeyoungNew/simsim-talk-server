@@ -14,11 +14,6 @@ chatRouter.post(
   chatHandler.createChatRoom,
 );
 // 나의 채팅방리스트 가져오기
-chatRouter.get(
-  "/get-chatlist",
-  isLogoutMiddleware,
-  authMiddleware,
-  chatHandler.getChatList,
-);
+chatRouter.get("/get-chatlist", authMiddleware, chatHandler.getChatList);
 
 export default chatRouter;
