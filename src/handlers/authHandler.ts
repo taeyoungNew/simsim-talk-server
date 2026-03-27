@@ -117,7 +117,7 @@ class AuthHandler {
       res.cookie("authorization", "", {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: "none",
         expires: new Date(0),
       });
       logger.info("로그아웃되었습니다.", {
