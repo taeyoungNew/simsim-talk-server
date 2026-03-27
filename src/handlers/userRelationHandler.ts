@@ -17,9 +17,7 @@ class UserRelationHandler {
     try {
       const userId = res.locals.userInfo?.userId;
 
-      const result = userId
-        ? await userRelationService.getFriends(userId)
-        : null;
+      const result = userId ? await userRelationService.getFriends(userId) : [];
 
       return res.status(200).json(result);
     } catch (error) {
@@ -42,7 +40,7 @@ class UserRelationHandler {
       const result = userId
         ? await userRelationService.getFollowings(userId)
         : null;
-      let rows = null;
+      let rows = [];
       if (userId) {
         rows = result.map(
           (row: {

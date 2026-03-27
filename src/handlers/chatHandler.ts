@@ -17,7 +17,7 @@ class ChatHandler {
     });
     try {
       const userId = res.locals.userInfo?.userId;
-      const result = userId ? await this.chatService.getChatList(userId) : null;
+      const result = userId ? await this.chatService.getChatList(userId) : [];
       return res.status(200).json(result);
     } catch (e) {
       next(e);
