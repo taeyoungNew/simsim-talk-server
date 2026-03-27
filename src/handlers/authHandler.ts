@@ -65,7 +65,7 @@ class AuthHandler {
       res.cookie("authorization", `Bearer ${accToken}`, {
         httpOnly: true,
         secure: true,
-        sameSite: "none",
+        sameSite: "strict",
         maxAge: 1000 * 60 * 30,
         expires: new Date(Date.now() + 1000 * 60 * 30),
       });
@@ -116,7 +116,7 @@ class AuthHandler {
       res.cookie("authorization", "", {
         httpOnly: true,
         secure: true,
-        sameSite: "none",
+        sameSite: "strict",
         expires: new Date(0),
       });
       logger.info("로그아웃되었습니다.", {

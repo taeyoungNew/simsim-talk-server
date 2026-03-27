@@ -144,7 +144,7 @@ export const authMiddleware = async (
         res.cookie("authorization", `Bearer ${newAccToken}`, {
           httpOnly: true,
           secure: true,
-          sameSite: "none",
+          sameSite: "strict",
           maxAge: 1000 * 60 * 30,
           expires: new Date(Date.now() + 1000 * 60 * 30),
         });
