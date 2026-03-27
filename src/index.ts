@@ -21,6 +21,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://simsim-talk-client.vercel.app",
   "https://www.simsimtalk.com",
+  "https://simsimtalk.com",
 ];
 
 app.use(
