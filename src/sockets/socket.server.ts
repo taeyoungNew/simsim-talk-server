@@ -11,11 +11,13 @@ export const initSocketServer = (httpServer: any) => {
       // ],
       // origin: `${process.env.CORS_ORIGIN}`,
       origin: (origin, callback) => {
-        if (
-          !origin ||
-          origin.endsWith(".vercel.app") ||
-          origin === "http://localhost:5173"
-        ) {
+        const allowedOrigins = [
+          "https://simsimtalk.com",
+          "https://www.simsimtalk.com",
+          "http://localhost:5173",
+        ];
+
+        if (!origin || allowedOrigins.includes(origin)) {
           callback(null, true);
         } else {
           callback(new Error("Not allowed by CORS"));
