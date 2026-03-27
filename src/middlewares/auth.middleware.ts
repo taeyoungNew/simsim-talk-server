@@ -146,6 +146,7 @@ export const authMiddleware = async (
           secure: true,
           sameSite: "lax",
           maxAge: 1000 * 60 * 30,
+          domain: ".simsimtalk.com",
           expires: new Date(Date.now() + 1000 * 60 * 30),
         });
         next();
