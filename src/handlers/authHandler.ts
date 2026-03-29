@@ -38,6 +38,7 @@ class AuthHandler {
         className: "AuthHandler",
         functionName: "loginUser",
       });
+      const isProd = process.env.NODE_ENV === "production";
       // 로그인정보로 회원유무확인
       const getUserInfo = await this.userService.findUserByEmail(email);
       // 패스워드확인
@@ -65,9 +66,9 @@ class AuthHandler {
       res.cookie("authorization", `Bearer ${accToken}`, {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
+        sameSite: isProd ? "lax" : "none",
         maxAge: 1000 * 60 * 30,
-        domain: ".simsimtalk.com",
+        domain: isProd ? ".simsimtalk.com" : undefined,
         expires: new Date(Date.now() + 1000 * 60 * 30),
       });
       logger.info("로그인되었습니다.", {
@@ -113,12 +114,15 @@ class AuthHandler {
       });
       const { authorization } = req.cookies;
       const [tokenType, token] = authorization.split(" ");
+      const isProd = process.env.NODE_ENV === "production";
+      console.log("isProd = ", isProd);
+
       await userCache.del(`token:${token}`);
       res.cookie("authorization", "", {
         httpOnly: true,
         secure: true,
-        sameSite: "lax",
-        domain: ".simsimtalk.com",
+        sameSite: isProd ? "lax" : "none",
+        domain: isProd ? ".simsimtalk.com" : undefined,
         expires: new Date(0),
       });
       logger.info("로그아웃되었습니다.", {
@@ -145,7 +149,6 @@ class AuthHandler {
     try {
       const { authorization } = req.cookies;
       const newcToken = res.locals.userInfo?.token;
-      console.log("authorization = ", authorization);
 
       if (authorization === undefined || authorization === null)
         return res.status(200).json({
