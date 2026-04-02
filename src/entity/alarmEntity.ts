@@ -6,3 +6,7 @@ export interface SaveAlarmEntity {
   alarmType: "FOLLOW" | "LIKE" | "COMMENT" | "SYSTEM";
   isRead: boolean;
 }
+
+export interface DeleteAlarmEntity {
+  userId: string;
+}

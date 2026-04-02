@@ -344,7 +344,7 @@ class UserRepository {
     // migrate의 모델명으로 해야한다
     const result = await Users.findOne({
       attributes: {
-        exclude: [],
+        exclude: ["password"],
         include: [
           [
             sequelize.literal(`(

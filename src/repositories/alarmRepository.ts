@@ -1,8 +1,8 @@
 import db from "../database/models/index";
 import logger from "../config/logger";
-import { SaveAlarmEntity } from "../entity/alarmEntity";
+import { DeleteAlarmEntity, SaveAlarmEntity } from "../entity/alarmEntity";
 import { ReadAlarmEntity } from "../entity/alarmsEntity";
-import { QueryTypes, where } from "sequelize";
+import { or, QueryTypes, where } from "sequelize";
 
 const { Alarms } = db;
 
@@ -47,6 +47,20 @@ class AlarmsRepository {
         },
       },
     );
+  };
+
+  public deleteAlarmsByUser = async ({ userId }: DeleteAlarmEntity) => {
+    logger.info("", {
+      layer: "Repository",
+      className: "AlarmsRepository",
+      functionName: "deleteAlarmsByUser",
+    });
+
+    await Alarms.destroyAll({
+      where: {
+        or: [{ senderId: userId }, { receiverId: userId }],
+      },
+    });
   };
 
   public getAlarmsByUser = async (userId: string) => {

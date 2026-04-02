@@ -12,10 +12,12 @@ import {
 import { CustomError } from "../errors/customError";
 import errorCodes from "../constants/error-codes.json";
 import FollowRepository from "../repositories/followRepository";
+import AlarmsRepository from "../repositories/alarmRepository";
 
 class UserService {
   private userRepository = new UserRepository();
   private followRepository = new FollowRepository();
+  private alarmsRepository = new AlarmsRepository();
 
   /**
    *
@@ -365,6 +367,7 @@ class UserService {
         functionName: "deleteUser",
       });
       await this.findUserById(id);
+      await this.alarmsRepository.deleteAlarmsByUser({ userId: id });
       await this.userRepository.deleteAccount(id);
     } catch (error) {
       throw error;
