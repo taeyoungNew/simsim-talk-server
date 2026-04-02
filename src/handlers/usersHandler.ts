@@ -13,11 +13,12 @@ import {
 } from "../common/validators/userExp";
 import errorCodes from "../constants/error-codes.json";
 import { CustomError } from "../errors/customError";
-import { uploadToR2 } from "../common/r2Cloud/uploadToR2";
+import AuthService from "../service/authService";
 import { userCache } from "../common/cacheLocal/userIdCache";
 import { uploadProfileToR2 } from "../common/r2Cloud/uploadProfileToR2";
 
 class UserHandler {
+  authService = new AuthService();
   userService = new UserService();
   followService = new FollowService();
   /**
@@ -353,7 +354,7 @@ class UserHandler {
 
   // 회원탈퇴
   public deleteUser = async (
-    req: Request,
+    req: Request<{ password: string }, {}, {}, {}>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -366,6 +367,11 @@ class UserHandler {
         functionName: "deleteUser",
       });
       const id = res.locals.userInfo.userId;
+      // 로그인정보로 회원유무확인
+      const password = req.params.password;
+      const getUserInfo = await this.userService.findUserById(id);
+      // 탈퇴유저의 패스워드확인
+      this.authService.validPassword(password, getUserInfo.password);
       await this.userService.deleteUser(id);
       return res.status(200).send({ message: "회원탈퇴가 완료되었습니다." });
     } catch (error) {

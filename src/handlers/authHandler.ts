@@ -42,7 +42,7 @@ class AuthHandler {
       // 로그인정보로 회원유무확인
       const getUserInfo = await this.userService.findUserByEmail(email);
       // 패스워드확인
-      this.validPassword(password, getUserInfo.password);
+      this.authService.validPassword(password, getUserInfo.password);
 
       // acc & ref token생성
       const accToken: string = accessToken(getUserInfo.id, getUserInfo.email);
@@ -115,7 +115,6 @@ class AuthHandler {
       const { authorization } = req.cookies;
       const [tokenType, token] = authorization.split(" ");
       const isProd = process.env.NODE_ENV === "production";
-      console.log("isProd = ", isProd);
 
       await userCache.del(`token:${token}`);
       res.cookie("authorization", "", {
@@ -180,23 +179,6 @@ class AuthHandler {
     } catch (e) {
       next(e);
     }
-  };
-
-  /**
-   * PW確認モジュール
-   *
-   * @param password 入力パスワード
-   * @param exPassword DB上のパスワード
-   *
-   */
-  public validPassword = (password: string, exPassword: string) => {
-    const result = bcrypt.compareSync(password, exPassword);
-    if (!result)
-      throw new CustomError(
-        errorCodes.AUTH.PASSWORD_INVALID.status,
-        errorCodes.AUTH.PASSWORD_INVALID.code,
-        "패스워드가 일치하지않습니다.",
-      );
   };
 }
 
