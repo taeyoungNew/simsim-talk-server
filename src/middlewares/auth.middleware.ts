@@ -29,7 +29,7 @@ export const authMiddleware = async (
       functionName: "authMiddleware",
     });
     const { authorization } = req.cookies;
-
+    const isProd = process.env.NODE_ENV === "production";
     // 1. 토큰이 아예 없는 경우 -> 비로그인 유저로 간주하고 통과
     if (!authorization) {
       res.locals.userInfo = null;
@@ -56,10 +56,12 @@ export const authMiddleware = async (
       });
       // accToken이 만료되었을경우
       //  -> 유효하지않으면 reftoken을 확인
+      console.log("token = ", token);
 
       // 캐시에 저장된 userId를 가져온다
       const cacheUserInfo = await userCache.get(`token:${token}`);
       const cacheUserInfoParse = JSON.parse(cacheUserInfo);
+      console.log("cacheUserInfoParse = ", cacheUserInfoParse);
 
       if (cacheUserInfoParse == null) {
         logger.warn("redis의 userId가 null", {
@@ -139,14 +141,15 @@ export const authMiddleware = async (
         await userCache.set(
           `token:${newAccToken}`,
           JSON.stringify(newSetUserInfo),
+          { EX: 7800 },
         );
 
         res.cookie("authorization", `Bearer ${newAccToken}`, {
           httpOnly: true,
           secure: true,
-          sameSite: "lax",
+          sameSite: isProd ? "lax" : "none",
           maxAge: 1000 * 60 * 30,
-          domain: ".simsimtalk.com",
+          domain: isProd ? ".simsimtalk.com" : undefined,
           expires: new Date(Date.now() + 1000 * 60 * 30),
         });
         next();
