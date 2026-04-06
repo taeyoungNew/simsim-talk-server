@@ -56,12 +56,10 @@ export const authMiddleware = async (
       });
       // accToken이 만료되었을경우
       //  -> 유효하지않으면 reftoken을 확인
-      console.log("token = ", token);
 
       // 캐시에 저장된 userId를 가져온다
       const cacheUserInfo = await userCache.get(`token:${token}`);
       const cacheUserInfoParse = JSON.parse(cacheUserInfo);
-      console.log("cacheUserInfoParse = ", cacheUserInfoParse);
 
       if (cacheUserInfoParse == null) {
         logger.warn("redis의 userId가 null", {
