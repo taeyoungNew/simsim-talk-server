@@ -2,7 +2,7 @@ import db from "../database/models/index";
 import logger from "../config/logger";
 import { DeleteAlarmEntity, SaveAlarmEntity } from "../entity/alarmEntity";
 import { ReadAlarmEntity } from "../entity/alarmsEntity";
-import { or, QueryTypes, where } from "sequelize";
+import { Op, or, QueryTypes, where } from "sequelize";
 
 const { Alarms } = db;
 
@@ -56,9 +56,9 @@ class AlarmsRepository {
       functionName: "deleteAlarmsByUser",
     });
 
-    await Alarms.destroyAll({
+    await Alarms.destroy({
       where: {
-        or: [{ senderId: userId }, { receiverId: userId }],
+        [Op.or]: [{ senderId: userId }, { receiverId: userId }],
       },
     });
   };

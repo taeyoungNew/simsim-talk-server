@@ -105,6 +105,28 @@ class UserRepository {
   };
 
   /**
+   * 인증용 유저의 정보가져오기
+   *
+   * @param myId: string
+   * @returns id, email, password
+   *
+   */
+  public getUserForAuth = async (userId: string) => {
+    logger.info("", {
+      layer: "Repository",
+      className: "UserRepository",
+      functionName: "getUserForAuth",
+    });
+
+    const result = await Users.findOne({
+      attributes: ["id", "email", "password"],
+      where: { id: userId },
+    });
+
+    return result;
+  };
+
+  /**
    * 자신의 정보가져오기
    *
    * @param myId: string

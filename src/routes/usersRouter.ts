@@ -69,7 +69,7 @@ userRouter.put(
 
 // 회원탈퇴
 userRouter.delete(
-  "/delete-user",
+  "/delete-user/:password",
   isLogoutMiddleware,
   authMiddleware,
   userHandler.deleteUser,

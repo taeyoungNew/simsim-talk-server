@@ -58,7 +58,6 @@ class AuthHandler {
         email: getUserInfo.email,
         userNickname: getUserInfo.UserInfo.nickname,
       };
-      console.log("accToken = ", accToken);
 
       // cache에 유저id저장
       await userCache.set(`token:${accToken}`, JSON.stringify(loginUserInfo), {

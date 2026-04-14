@@ -269,6 +269,36 @@ class UserService {
   };
 
   /**
+   * 인증용 유저의 정보가져오기
+   *
+   * @param myId: string
+   * @returns id, email, password
+   *
+   */
+  public getUserForAuth = async (userId: string) => {
+    try {
+      logger.info("", {
+        layer: "Service",
+        className: "UserService",
+        functionName: "getUserForAuth",
+      });
+
+      const result = await this.userRepository.getUserForAuth(userId);
+
+      if (!result) {
+        throw new CustomError(
+          errorCodes.AUTH.USER_NOT_FOUND.status,
+          errorCodes.AUTH.USER_NOT_FOUND.code,
+          "존재하지않는 회원입니다.",
+        );
+      }
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
    *
    * @param email
    *

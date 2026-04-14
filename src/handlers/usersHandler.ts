@@ -369,7 +369,10 @@ class UserHandler {
       const id = res.locals.userInfo.userId;
       // 로그인정보로 회원유무확인
       const password = req.params.password;
-      const getUserInfo = await this.userService.findUserById(id);
+      // console.log("password = ", password);
+
+      const getUserInfo = await this.userService.getUserForAuth(id);
+
       // 탈퇴유저의 패스워드확인
       this.authService.validPassword(password, getUserInfo.password);
       await this.userService.deleteUser(id);
