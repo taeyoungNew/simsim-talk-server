@@ -16,6 +16,8 @@ import { CustomError } from "../errors/customError";
 import AuthService from "../service/authService";
 import { userCache } from "../common/cacheLocal/userIdCache";
 import { uploadProfileToR2 } from "../common/r2Cloud/uploadProfileToR2";
+import { deleteUserPostsCache } from "../common/cacheLocal/userCache/userCacheModule";
+import { deletePostsCache } from "../common/cacheLocal/postCache/postCacheModule";
 
 class UserHandler {
   authService = new AuthService();
@@ -369,13 +371,14 @@ class UserHandler {
       const id = res.locals.userInfo.userId;
       // 로그인정보로 회원유무확인
       const password = req.params.password;
-      // console.log("password = ", password);
 
       const getUserInfo = await this.userService.getUserForAuth(id);
 
       // 탈퇴유저의 패스워드확인
       this.authService.validPassword(password, getUserInfo.password);
       await this.userService.deleteUser(id);
+      const userPostIds = await deleteUserPostsCache(id);
+      await deletePostsCache(userPostIds);
       return res.status(200).send({ message: "회원탈퇴가 완료되었습니다." });
     } catch (error) {
       next(error);
