@@ -6,4 +6,5 @@ const postRedisClient: RedisClientType = redis.createClient({
   legacyMode: true,
 });
 postRedisClient.connect().then().catch(console.error);
+
 export const postCache = postRedisClient.v4;
