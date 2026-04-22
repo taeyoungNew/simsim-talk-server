@@ -129,6 +129,21 @@ class PostRepository {
       },
     );
   };
+
+  public getUserPostIds = async (userId: string) => {
+    logger.info("", {
+      layer: "Repository",
+      className: "PostRepository",
+      functionName: "getUserPostIds",
+    });
+
+    return await Posts.findAll({
+      attributes: ["id"],
+      where: {
+        userId,
+      },
+    });
+  };
   // user의 Post 불러오기
   public getUserPosts = async (param: GetUserPostsEntity) => {
     logger.info("", {
