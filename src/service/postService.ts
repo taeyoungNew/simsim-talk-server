@@ -73,14 +73,29 @@ class PostService {
     }
   };
 
+  public getUserPostIds = async (userId: string) => {
+    logger.info("", {
+      layer: "Service",
+      className: "PostService",
+      functionName: "getUserPostIds",
+    });
+    try {
+      // 해당 유저가 있는지 확인?
+      await this.userService.findUserById(userId);
+      return await this.postRepository.getUserPostIds(userId);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   // 유저가 작성한 게시물들만 조회'
   public getUserPosts = async (postInfo: GetUserPostsDto) => {
+    logger.info("", {
+      layer: "Service",
+      className: "PostService",
+      functionName: "getUserPosts",
+    });
     try {
-      logger.info("", {
-        layer: "Service",
-        className: "PostService",
-        functionName: "getUserPosts",
-      });
       // 해당 유저가 있는지 확인?
       await this.userService.findUserById(postInfo.userId);
       return await this.postRepository.getUserPosts(postInfo);
@@ -118,7 +133,7 @@ class PostService {
         (el: { dataValues: { isLiked: number | boolean } }) => {
           el.dataValues.isLiked = el.dataValues.isLiked === 0 ? false : true;
           return el;
-        }
+        },
       );
       return result;
     } catch (error) {
@@ -159,7 +174,7 @@ class PostService {
         throw new CustomError(
           errorCodes.POST.FORBIDDEN.status,
           errorCodes.POST.FORBIDDEN.code,
-          "자신의 게시물이 아닙니다."
+          "자신의 게시물이 아닙니다.",
         );
     } catch (error) {
       throw error;
@@ -179,7 +194,7 @@ class PostService {
         throw new CustomError(
           errorCodes.POST.NOT_FOUND.status,
           errorCodes.POST.NOT_FOUND.code,
-          "해당 게시물이 존재하지 않습니다."
+          "해당 게시물이 존재하지 않습니다.",
         );
       return result;
     } catch (error) {

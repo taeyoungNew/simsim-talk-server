@@ -18,9 +18,11 @@ import { userCache } from "../common/cacheLocal/userIdCache";
 import { uploadProfileToR2 } from "../common/r2Cloud/uploadProfileToR2";
 import { deleteUserPostsCache } from "../common/cacheLocal/userCache/userCacheModule";
 import { deletePostsCache } from "../common/cacheLocal/postCache/postCacheModule";
+import PostService from "../service/postService";
 
 class UserHandler {
   authService = new AuthService();
+  postService = new PostService();
   userService = new UserService();
   followService = new FollowService();
   /**
@@ -376,9 +378,12 @@ class UserHandler {
 
       // 탈퇴유저의 패스워드확인
       this.authService.validPassword(password, getUserInfo.password);
+      const getUserPostIds = await this.postService.getUserPostIds(id);
+      const postIds = getUserPostIds.map((p: { id: any }) => p.id);
+
       await this.userService.deleteUser(id);
-      const userPostIds = await deleteUserPostsCache(id);
-      await deletePostsCache(userPostIds);
+      await deleteUserPostsCache(id);
+      await deletePostsCache(postIds);
       return res.status(200).send({ message: "회원탈퇴가 완료되었습니다." });
     } catch (error) {
       next(error);
