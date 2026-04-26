@@ -15,7 +15,10 @@ import errorCodes from "../constants/error-codes.json";
 import { CustomError } from "../errors/customError";
 import AuthService from "../service/authService";
 import { userCache } from "../common/cacheLocal/userIdCache";
-import { uploadProfileToR2 } from "../common/r2Cloud/uploadProfileToR2";
+import {
+  deleteProfileToR2,
+  uploadProfileToR2,
+} from "../common/r2Cloud/profileStorageToR2";
 import { deleteUserPostsCache } from "../common/cacheLocal/userCache/userCacheModule";
 import { deletePostsCache } from "../common/cacheLocal/postCache/postCacheModule";
 import PostService from "../service/postService";
@@ -370,10 +373,11 @@ class UserHandler {
         className: "UserHandler",
         functionName: "deleteUser",
       });
+      const { authorization } = req.cookies;
+      const [tokenType, token] = authorization.split(" ");
       const id = res.locals.userInfo.userId;
       // 로그인정보로 회원유무확인
       const password = req.params.password;
-
       const getUserInfo = await this.userService.getUserForAuth(id);
 
       // 탈퇴유저의 패스워드확인
@@ -382,6 +386,11 @@ class UserHandler {
       const postIds = getUserPostIds.map((p: { id: any }) => p.id);
 
       await this.userService.deleteUser(id);
+      await deleteProfileToR2({
+        key: `user-info/background-img/${id}/avatar.webp`,
+      });
+
+      await userCache.del(`token:${token}`);
       await deleteUserPostsCache(id);
       await deletePostsCache(postIds);
       return res.status(200).send({ message: "회원탈퇴가 완료되었습니다." });
