@@ -9,6 +9,41 @@ import logger from "../config/logger";
 class BlockUserService {
   private blockUserRepository = new BlockUserRepository();
   private userService = new UserService();
+
+  /**
+   * 내가 차단한 유저의 Id리스트 조회
+   *
+   */
+  public blockByMe = async (userId: string) => {
+    logger.info("", {
+      layer: "Handler",
+      className: "BlockUserHandler",
+      functionName: "blockByMe",
+    });
+    try {
+      return this.blockUserRepository.blockByMe(userId);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * 나를 차단한 유저의 Id리스트조회
+   *
+   */
+  public blockedMe = async (userId: string) => {
+    logger.info("", {
+      layer: "Handler",
+      className: "BlockUserHandler",
+      functionName: "blockByMe",
+    });
+    try {
+      return this.blockUserRepository.blockedMe(userId);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   /**
    * 유저차단
    */
@@ -28,6 +63,7 @@ class BlockUserService {
       throw error;
     }
   };
+
   /**
    * 유저차단풀기
    */

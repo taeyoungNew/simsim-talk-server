@@ -42,7 +42,7 @@ class Comments extends Model implements CommentsAttributes {
       {
         sequelize: sequelize,
         modelName: "Comments",
-      }
+      },
     );
     return Comments;
   }

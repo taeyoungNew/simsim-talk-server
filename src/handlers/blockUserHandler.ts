@@ -12,6 +12,7 @@ import logger from "../config/logger";
  */
 class BlockUserHandler {
   private blockUserService = new BlockUserService();
+
   /**
    * ユーザブロックAPI
    *
@@ -23,14 +24,14 @@ class BlockUserHandler {
   public blockUser = async (
     req: Request<{ blockedId: string }, {}, {}, {}>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
+    logger.info("", {
+      layer: "Handler",
+      className: "BlockUserHandler",
+      functionName: "blockUser",
+    });
     try {
-      logger.info("", {
-        layer: "Handler",
-        className: "BlockUserHandler",
-        functionName: "blockUser",
-      });
       const userId = res.locals.userInfo.userId;
       const blockUserPayment: BlockUserDto = {
         blockedId: req.params.blockedId,
@@ -48,7 +49,7 @@ class BlockUserHandler {
   public unBlockUser = async (
     req: Request<{ unblockedId: string }, {}, {}, {}>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       logger.info("", {

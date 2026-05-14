@@ -47,25 +47,38 @@ class BlockUserRepository {
   /**
    * 자신이 차단한 유저리스트 불러오기
    *
-   * @retrun id, blockerdUserNickname, blockerdUserId
    */
-  // public blockUserList = async (unBlockUserPayment: BlockUserListEntity) => {
-  //   logger.info("", {
-  //     layer: "Repository",
-  //     className: "BlockUserRepository",
-  //     functionName: "blockUserList",
-  //   });
-  //   const { userId } = unBlockUserPayment;
-  //   await BlockUser.findAll({
-  //     attributes: ["id", "createdAt"],
-  //     include: [{ model: Users, required: true, where: {
-  //       id:
-  //     } }],
-  //     where: {
-  //       blockerId: userId,
-  //     },
-  //   });
-  // };
+  public blockByMe = async (userId: string) => {
+    logger.info("", {
+      layer: "Repository",
+      className: "BlockUserRepository",
+      functionName: "blockByMe",
+    });
+    await BlockUser.findAll({
+      attributes: ["id", "createdAt"],
+      where: {
+        blockerId: userId,
+      },
+    });
+  };
+
+  /**
+   * 자신을 차단한 유저리스트 불러오기
+   *
+   */
+  public blockedMe = async (userId: string) => {
+    logger.info("", {
+      layer: "Repository",
+      className: "BlockUserRepository",
+      functionName: "blockedMe",
+    });
+    await BlockUser.findAll({
+      attributes: ["id", "createdAt"],
+      where: {
+        blockedId: userId,
+      },
+    });
+  };
 }
 
 export default BlockUserRepository;
