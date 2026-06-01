@@ -54,7 +54,7 @@ class BlockUserRepository {
       className: "BlockUserRepository",
       functionName: "blockByMe",
     });
-    await BlockUser.findAll({
+    return await BlockUser.findAll({
       attributes: ["id", "createdAt"],
       where: {
         blockerId: userId,
@@ -72,7 +72,7 @@ class BlockUserRepository {
       className: "BlockUserRepository",
       functionName: "blockedMe",
     });
-    await BlockUser.findAll({
+    return await BlockUser.findAll({
       attributes: ["id", "createdAt"],
       where: {
         blockedId: userId,

@@ -1,6 +1,7 @@
 import {
   BlockUserDto,
   BlockUserListDto,
+  FilterBlockedPostsDto,
   UnBlockUserDto,
 } from "../dtos/blockUserDto";
 import UserService from "./usersService";
@@ -84,21 +85,36 @@ class BlockUserService {
     }
   };
   /**
-   * 차단한 유저리스트 불러오기
+   * 차단한유저의 게시물필터
    */
-  // public blockUserList = async (blockUserListPayment: BlockUserListDto) => {
-  //   try {
-  //     logger.info("", {
-  //       layer: "Service",
-  //       className: "BlockUserService",
-  //       functionName: "blockUserList",
-  //     });
+  public filterBlockedPosts = async (
+    filterBlockedPosts: FilterBlockedPostsDto,
+  ) => {
+    logger.info("", {
+      layer: "Service",
+      className: "BlockUserService",
+      functionName: "filterBlockedPosts",
+    });
+    try {
+      const { userId, posts } = filterBlockedPosts;
+      const blockByMeIds = (await this.blockByMe(userId)).map(
+        (block) => block.blockedId,
+      );
+      const blockedMeIds = (await this.blockedMe(userId)).map(
+        (block) => block.blockerId,
+      );
 
-  //     return await this.blockUserRepository.blockUserList(blockUserListPayment);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // };
+      const blockedIds = new Set([...blockByMeIds, ...blockedMeIds]);
+
+      const filtblockedByMePosts = posts.filter((el) => {
+        return !blockedIds.has(el.userId);
+      });
+
+      return filtblockedByMePosts;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 export default BlockUserService;

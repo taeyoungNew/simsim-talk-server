@@ -17,10 +17,12 @@ import { userPostsCache } from "../common/cacheLocal/userPostsCache";
 import { CustomError } from "../errors/customError";
 import errorCodes from "../constants/error-codes.json";
 import FollowService from "../service/followService";
-// dotenv.config();
+import BlockUserService from "../service/blockUserService";
+
 class PostHandler {
   postService = new PostService();
   followService = new FollowService();
+  blockUserService = new BlockUserService();
   // 게시물 작성
   public createPost: RequestHandler = async (
     req: Request<{}, {}, CreatePostDto, {}>,
@@ -126,14 +128,14 @@ class PostHandler {
     res: Response,
     next: NextFunction,
   ) => {
+    logger.info("", {
+      method: "get",
+      url: "api/post/",
+      layer: "Handlers",
+      className: "PostHandler",
+      functionName: "getAllPosts",
+    });
     try {
-      logger.info("", {
-        method: "get",
-        url: "api/post/",
-        layer: "Handlers",
-        className: "PostHandler",
-        functionName: "getAllPosts",
-      });
       console.time("after-db");
       const postLastId = Number(req.query.postLastId);
 
@@ -162,6 +164,10 @@ class PostHandler {
         if (result.length != 0) {
           posts = result.splice(0, 5);
           const isLast = posts.length < 5 ? true : false;
+          // const filtBlockPosts = this.blockUserService.filterBlockedPosts({
+          //   userId,
+          //   result,
+          // });
           return res
             .status(200)
             .json({ posts, isLast, isLikedPostIds, isFollowingedUserIds });
