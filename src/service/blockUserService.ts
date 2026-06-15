@@ -7,6 +7,7 @@ import {
 import UserService from "./usersService";
 import BlockUserRepository from "../repositories/blockUserRepository";
 import logger from "../config/logger";
+
 class BlockUserService {
   private blockUserRepository = new BlockUserRepository();
   private userService = new UserService();
@@ -17,8 +18,8 @@ class BlockUserService {
    */
   public blockByMe = async (userId: string) => {
     logger.info("", {
-      layer: "Handler",
-      className: "BlockUserHandler",
+      layer: "Service",
+      className: "BlockUserService",
       functionName: "blockByMe",
     });
     try {
@@ -34,9 +35,9 @@ class BlockUserService {
    */
   public blockedMe = async (userId: string) => {
     logger.info("", {
-      layer: "Handler",
-      className: "BlockUserHandler",
-      functionName: "blockByMe",
+      layer: "Service",
+      className: "BlockUserService",
+      functionName: "blockedMe",
     });
     try {
       return this.blockUserRepository.blockedMe(userId);
@@ -97,23 +98,36 @@ class BlockUserService {
     });
     try {
       const { userId, posts } = filterBlockedPosts;
-      const blockByMeIds = (await this.blockByMe(userId)).map(
-        (block) => block.blockedId,
-      );
-      const blockedMeIds = (await this.blockedMe(userId)).map(
-        (block) => block.blockerId,
-      );
+      let result;
+      if (!userId) {
+        return posts;
+      }
 
-      const blockedIds = new Set([...blockByMeIds, ...blockedMeIds]);
+      const blockedIds = await this.getBlockedIds(userId);
 
-      const filtblockedByMePosts = posts.filter((el) => {
-        return !blockedIds.has(el.userId);
-      });
+      if (blockedIds !== null) {
+        result = posts.filter((el) => {
+          return !blockedIds.has(el.userId);
+        });
+      } else {
+        result = posts;
+      }
 
-      return filtblockedByMePosts;
+      return posts;
     } catch (error) {
       throw error;
     }
+  };
+
+  public getBlockedIds = async (userId: string) => {
+    const blockByMeIds = (await this.blockByMe(userId)).map(
+      (block) => block.blockedId,
+    );
+    const blockedMeIds = (await this.blockedMe(userId)).map(
+      (block) => block.blockerId,
+    );
+    const blockedIds = new Set([...blockByMeIds, ...blockedMeIds]);
+    return blockedIds ? blockedIds : null;
   };
 }
 

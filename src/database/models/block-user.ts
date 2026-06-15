@@ -53,7 +53,7 @@ class BlockUsers extends Model implements BlockUserAttributes {
       {
         sequelize: sequelize,
         modelName: "BlockUsers",
-        tableName: "blocked_users",
+        tableName: "BlockUsers",
         timestamps: true,
         indexes: [
           {

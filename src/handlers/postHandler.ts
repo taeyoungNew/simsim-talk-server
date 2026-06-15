@@ -164,10 +164,10 @@ class PostHandler {
         if (result.length != 0) {
           posts = result.splice(0, 5);
           const isLast = posts.length < 5 ? true : false;
-          // const filtBlockPosts = this.blockUserService.filterBlockedPosts({
-          //   userId,
-          //   result,
-          // });
+          const filtBlockPosts = this.blockUserService.filterBlockedPosts({
+            userId,
+            posts: result,
+          });
           return res
             .status(200)
             .json({ posts, isLast, isLikedPostIds, isFollowingedUserIds });

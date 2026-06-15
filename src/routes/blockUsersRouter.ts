@@ -8,17 +8,17 @@ const blockUserHandler = new BlockUserHandler();
 
 // 해당유저 차단하기
 blockUserRouter.post(
-  "/:blockedId",
+  "/",
   isLogoutMiddleware,
   authMiddleware,
-  blockUserHandler.blockUser
+  blockUserHandler.blockUser,
 );
 // 해당유저 차단풀기
 blockUserRouter.delete(
-  "/unblock-user/:unblockedId",
+  "/:unblockedId",
   isLogoutMiddleware,
   authMiddleware,
-  blockUserHandler.unBlockUser
+  blockUserHandler.unBlockUser,
 );
 // 자신이 차단한 유저리스트가져오기
 // blockUserRouter.get(
