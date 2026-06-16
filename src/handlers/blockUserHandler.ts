@@ -22,7 +22,7 @@ class BlockUserHandler {
    * @returns
    */
   public blockUser = async (
-    req: Request<{ blockedId: string }, {}, {}, {}>,
+    req: Request<{ blockUserId: string }, {}, {}, {}>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -34,9 +34,10 @@ class BlockUserHandler {
     try {
       const userId = res.locals.userInfo.userId;
       const blockUserPayment: BlockUserDto = {
-        blockedId: req.params.blockedId,
+        blockedId: req.params.blockUserId,
         blockerId: userId,
       };
+      console.log("blockUserPayment = ", blockUserPayment);
 
       await this.blockUserService.blockUser(blockUserPayment);
 

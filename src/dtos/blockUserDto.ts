@@ -1,4 +1,3 @@
-// import { Post } from "../types/postType";
 import Post from "../database/models/posts";
 
 export interface BlockUserDto {

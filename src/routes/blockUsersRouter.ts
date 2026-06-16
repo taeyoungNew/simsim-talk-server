@@ -8,7 +8,7 @@ const blockUserHandler = new BlockUserHandler();
 
 // 해당유저 차단하기
 blockUserRouter.post(
-  "/",
+  "/:blockUserId",
   isLogoutMiddleware,
   authMiddleware,
   blockUserHandler.blockUser,
