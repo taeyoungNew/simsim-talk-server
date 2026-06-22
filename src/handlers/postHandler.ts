@@ -164,13 +164,19 @@ class PostHandler {
         if (result.length != 0) {
           posts = result.splice(0, 5);
           const isLast = posts.length < 5 ? true : false;
-          const filtBlockPosts = this.blockUserService.filterBlockedPosts({
-            userId,
-            posts: result,
+          const filtBlockPosts = await this.blockUserService.filterBlockedPosts(
+            {
+              userId,
+              posts: result,
+            },
+          );
+
+          return res.status(200).json({
+            posts: filtBlockPosts,
+            isLast,
+            isLikedPostIds,
+            isFollowingedUserIds,
           });
-          return res
-            .status(200)
-            .json({ posts, isLast, isLikedPostIds, isFollowingedUserIds });
         } else {
           // ✨ 데이터가 없을 때도 응답을 보내야 함!
           return res.status(200).json({
@@ -194,9 +200,17 @@ class PostHandler {
         const posts = postJsons.map((post) => JSON.parse(post));
         const isLast = posts.length < 5 ? true : false;
 
-        return res
-          .status(200)
-          .json({ posts, isLast, isLikedPostIds, isFollowingedUserIds });
+        const filtBlockPosts = await this.blockUserService.filterBlockedPosts({
+          userId,
+          posts,
+        });
+
+        return res.status(200).json({
+          posts: filtBlockPosts,
+          isLast,
+          isLikedPostIds,
+          isFollowingedUserIds,
+        });
       }
     } catch (e) {
       next(e);

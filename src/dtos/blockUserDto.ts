@@ -18,3 +18,8 @@ export interface FilterBlockedPostsDto {
   userId: string;
   posts: Post[];
 }
+
+export interface FindBlockRelationDto {
+  myId: string;
+  userId: string;
+}

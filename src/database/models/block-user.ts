@@ -74,12 +74,14 @@ class BlockUsers extends Model implements BlockUserAttributes {
 
   static associate(db: any) {
     BlockUsers.belongsTo(db.Users, {
+      as: "blocker",
       foreignKey: "blockerId",
       targetKey: "id",
       onUpdate: "cascade",
       onDelete: "cascade",
     });
     BlockUsers.belongsTo(db.Users, {
+      as: "blocked",
       foreignKey: "blockedId",
       targetKey: "id",
       onUpdate: "cascade",

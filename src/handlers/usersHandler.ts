@@ -22,12 +22,14 @@ import {
 import { deleteUserPostsCache } from "../common/cacheLocal/userCache/userCacheModule";
 import { deletePostsCache } from "../common/cacheLocal/postCache/postCacheModule";
 import PostService from "../service/postService";
+import BlockUserService from "../service/blockUserService";
 
 class UserHandler {
   authService = new AuthService();
   postService = new PostService();
   userService = new UserService();
   followService = new FollowService();
+  blockUserService = new BlockUserService();
   /**
    * 회원가입
    *
@@ -232,7 +234,7 @@ class UserHandler {
   };
 
   /**
-   * 특정유저의 정보가져오기
+   * 특정유저의 정보가져오기(유저페이지)
    *
    * @param req
    * @param res
@@ -253,9 +255,12 @@ class UserHandler {
       });
 
       const myId = res.locals.userInfo?.userId;
-
       const userId = req.params.userId;
       const result = await this.userService.findUserInfos({ userId, myId });
+      result.dataValues.blockStatus = await this.blockUserService.isBlocked({
+        myId,
+        userId,
+      });
 
       result.dataValues.isFollowinged =
         result.dataValues.isFollowinged === 1 ? true : false;

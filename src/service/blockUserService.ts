@@ -2,6 +2,7 @@ import {
   BlockUserDto,
   BlockUserListDto,
   FilterBlockedPostsDto,
+  FindBlockRelationDto,
   UnBlockUserDto,
 } from "../dtos/blockUserDto";
 import UserService from "./usersService";
@@ -27,6 +28,17 @@ class BlockUserService {
     } catch (error) {
       throw error;
     }
+  };
+  /**
+   * 상대를 내가 차단했는지의 여부구하기
+   */
+  public isBlocked = async ({ myId, userId }: FindBlockRelationDto) => {
+    const block = await this.blockUserRepository.findBlockRelation({
+      myId,
+      userId,
+    });
+
+    return !!block;
   };
 
   /**
@@ -85,6 +97,7 @@ class BlockUserService {
       throw error;
     }
   };
+
   /**
    * 차단한유저의 게시물필터
    */
@@ -113,19 +126,21 @@ class BlockUserService {
         result = posts;
       }
 
-      return posts;
+      return result;
     } catch (error) {
       throw error;
     }
   };
 
+  // 차단한 유저id리스트 가져오기
   public getBlockedIds = async (userId: string) => {
     const blockByMeIds = (await this.blockByMe(userId)).map(
-      (block) => block.blockedId,
+      (block: { blockedId: string }) => block.blockedId,
     );
     const blockedMeIds = (await this.blockedMe(userId)).map(
-      (block) => block.blockerId,
+      (block: { blockerId: string }) => block.blockerId,
     );
+
     const blockedIds = new Set([...blockByMeIds, ...blockedMeIds]);
     return blockedIds ? blockedIds : null;
   };

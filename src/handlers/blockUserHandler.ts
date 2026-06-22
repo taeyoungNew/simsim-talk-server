@@ -37,7 +37,6 @@ class BlockUserHandler {
         blockedId: req.params.blockUserId,
         blockerId: userId,
       };
-      console.log("blockUserPayment = ", blockUserPayment);
 
       await this.blockUserService.blockUser(blockUserPayment);
 
@@ -64,7 +63,7 @@ class BlockUserHandler {
         blockerId: userId,
       };
 
-      await this.blockUserService.blockUser(unBlockUserPayment);
+      await this.blockUserService.unBLockUser(unBlockUserPayment);
 
       return res
         .status(200)

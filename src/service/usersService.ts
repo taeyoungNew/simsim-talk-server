@@ -13,6 +13,7 @@ import { CustomError } from "../errors/customError";
 import errorCodes from "../constants/error-codes.json";
 import FollowRepository from "../repositories/followRepository";
 import AlarmsRepository from "../repositories/alarmRepository";
+import BlockUserService from "./blockUserService";
 
 class UserService {
   private userRepository = new UserRepository();
@@ -171,6 +172,7 @@ class UserService {
         isFollowingedIds = getMyFollowings.map(
           (el: { followingId: string }) => el.followingId,
         );
+        // result.isBlocked = await this.blockUserService.isBlocked({myId: params.myId, userId: params.userId})
         result.isFollowingedIds = isFollowingedIds;
       }
 

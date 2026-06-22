@@ -13,8 +13,6 @@ export const isLoginMiddleware = (
   next: NextFunction,
 ) => {
   try {
-    console.log("req.cookies.authorization = ", req.cookies.authorization);
-
     if (req.cookies.authorization !== undefined) {
       logger.error("현재 로그인상태입니다.", {
         method: "post",

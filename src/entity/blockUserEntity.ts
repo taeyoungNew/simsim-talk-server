@@ -11,3 +11,8 @@ export interface UnBlockUserEntity {
 export interface BlockUserListEntity {
   userId: string;
 }
+
+export interface FindBlockRelationEntity {
+  myId: string;
+  userId: string;
+}
