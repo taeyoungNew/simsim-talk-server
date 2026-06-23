@@ -137,10 +137,9 @@ class PostHandler {
     });
     try {
       console.time("after-db");
+
       const postLastId = Number(req.query.postLastId);
-
       const userId = res.locals.userInfo?.userId;
-
       const ids: [] = await postCache.lRange("posts:list", 0, -1);
 
       let isLikedPostIds;
@@ -162,8 +161,6 @@ class PostHandler {
         await this.cachePosts(result);
         let posts;
         if (result.length != 0) {
-          posts = result.splice(0, 5);
-          const isLast = posts.length < 5 ? true : false;
           const filtBlockPosts = await this.blockUserService.filterBlockedPosts(
             {
               userId,
@@ -171,6 +168,8 @@ class PostHandler {
             },
           );
 
+          posts = filtBlockPosts.splice(0, 5);
+          const isLast = posts.length < 5 ? true : false;
           return res.status(200).json({
             posts: filtBlockPosts,
             isLast,
