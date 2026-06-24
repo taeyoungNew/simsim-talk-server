@@ -15,10 +15,12 @@ import logger from "../config/logger";
 import PostLikeRepository from "../repositories/postLikeRepository";
 import { GetIsLikedPostIdsDto } from "../dtos/postLikeDto";
 import { CustomError } from "../errors/customError";
+import BlockUserService from "./blockUserService";
 class PostService {
   postLikeRepository = new PostLikeRepository();
   postRepository = new PostRepository();
   userService = new UserService();
+  blockUserService = new BlockUserService();
 
   // 자신이 좋아요를 누른 게시물의 id와 isLiked의 리스트 구하기
   public getIsLikedPostIds = async (param: GetIsLikedPostIdsDto) => {
@@ -121,13 +123,14 @@ class PostService {
     }
   };
   // 게시물 모두조회
-  public getAllPosts = async (userId: GetAllPostDto) => {
+  public getAllPosts = async (params: GetAllPostDto) => {
     try {
       logger.info("", {
         layer: "Service",
         className: "PostService",
         functionName: "getAllPosts",
       });
+
       let result = await this.postRepository.getAllPosts();
       result = result.map(
         (el: { dataValues: { isLiked: number | boolean } }) => {

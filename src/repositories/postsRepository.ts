@@ -225,7 +225,6 @@ class PostRepository {
       className: "PostRepository",
       functionName: "getAllPosts",
     });
-
     return await Posts.findAll({
       attributes: {
         exclude: ["Posts.id"],

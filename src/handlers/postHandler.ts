@@ -156,22 +156,23 @@ class PostHandler {
       console.timeEnd("after-db");
       // 첫랜더링
       if (ids.length === 0) {
-        result = await this.postService.getAllPosts(userId);
+        result = await this.postService.getAllPosts({ userId });
 
         await this.cachePosts(result);
         let posts;
         if (result.length != 0) {
-          const filtBlockPosts = await this.blockUserService.filterBlockedPosts(
-            {
-              userId,
-              posts: result,
-            },
-          );
+          // const filtBlockPosts = await this.blockUserService.filterBlockedPosts(
+          //   {
+          //     userId,
+          //     posts: result,
+          //   },
+          // );
 
-          posts = filtBlockPosts.splice(0, 5);
+          // posts = filtBlockPosts.splice(0, 5);
+          posts = result;
           const isLast = posts.length < 5 ? true : false;
           return res.status(200).json({
-            posts: filtBlockPosts,
+            posts,
             isLast,
             isLikedPostIds,
             isFollowingedUserIds,
@@ -199,13 +200,13 @@ class PostHandler {
         const posts = postJsons.map((post) => JSON.parse(post));
         const isLast = posts.length < 5 ? true : false;
 
-        const filtBlockPosts = await this.blockUserService.filterBlockedPosts({
-          userId,
-          posts,
-        });
+        // const filtBlockPosts = await this.blockUserService.filterBlockedPosts({
+        //   userId,
+        //   posts,
+        // });
 
         return res.status(200).json({
-          posts: filtBlockPosts,
+          posts,
           isLast,
           isLikedPostIds,
           isFollowingedUserIds,

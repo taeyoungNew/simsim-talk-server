@@ -117,9 +117,6 @@ class BlockUserService {
       }
 
       const blockedIds = await this.getBlockedIds(userId);
-      console.log("posts = ", posts);
-
-      console.log("blockedIds = ", blockedIds);
 
       if (blockedIds !== null) {
         result = posts.filter((el) => {
@@ -135,17 +132,27 @@ class BlockUserService {
     }
   };
 
-  // 차단한 유저id리스트 가져오기
+  // 나를 차단한 나에게 차단당한 유저id리스트 가져오기
   public getBlockedIds = async (userId: string) => {
-    const blockByMeIds = (await this.blockByMe(userId)).map(
-      (block: { blockedId: string }) => block.blockedId,
-    );
-    const blockedMeIds = (await this.blockedMe(userId)).map(
-      (block: { blockerId: string }) => block.blockerId,
-    );
+    logger.info("", {
+      layer: "Service",
+      className: "BlockUserService",
+      functionName: "getBlockedIds",
+    });
+    try {
+      if (!userId) return new Set();
+      const blockByMeIds = (await this.blockByMe(userId)).map(
+        (block: { blockedId: string }) => block.blockedId,
+      );
+      const blockedMeIds = (await this.blockedMe(userId)).map(
+        (block: { blockerId: string }) => block.blockerId,
+      );
 
-    const blockedIds = new Set([...blockByMeIds, ...blockedMeIds]);
-    return blockedIds ? blockedIds : null;
+      const blockedIds = new Set([...blockByMeIds, ...blockedMeIds]);
+      return blockedIds ? blockedIds : null;
+    } catch (error) {
+      throw error;
+    }
   };
 }
 
