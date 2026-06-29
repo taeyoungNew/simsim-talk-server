@@ -17,6 +17,8 @@ export interface BlockUserListDto {
 export interface FilterBlockedPostsDto {
   userId: string;
   posts: Post[];
+  limit?: number;
+  lastPostId?: number;
 }
 
 export interface FindBlockRelationDto {

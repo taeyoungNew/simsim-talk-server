@@ -101,16 +101,17 @@ class BlockUserService {
   /**
    * 차단한유저의 게시물필터
    */
-  public filterBlockedPosts = async (
-    filterBlockedPosts: FilterBlockedPostsDto,
-  ) => {
+  public filterBlockedPosts = async ({
+    limit,
+    posts,
+    userId,
+  }: FilterBlockedPostsDto) => {
     logger.info("", {
       layer: "Service",
       className: "BlockUserService",
       functionName: "filterBlockedPosts",
     });
     try {
-      const { userId, posts } = filterBlockedPosts;
       let result;
       if (!userId) {
         return posts;

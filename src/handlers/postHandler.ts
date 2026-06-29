@@ -161,16 +161,21 @@ class PostHandler {
         await this.cachePosts(result);
         let posts;
         if (result.length != 0) {
-          // const filtBlockPosts = await this.blockUserService.filterBlockedPosts(
-          //   {
-          //     userId,
-          //     posts: result,
-          //   },
-          // );
+          let filtBlockPosts: Posts[];
+          let cursor = 0;
 
-          // posts = filtBlockPosts.splice(0, 5);
-          posts = result;
-          const isLast = posts.length < 5 ? true : false;
+          do {
+            posts = result.splice(cursor + 1, cursor + 5);
+
+            const filtered = await this.blockUserService.filterBlockedPosts({
+              userId,
+              posts,
+            });
+            filtBlockPosts.push(...filtered);
+          } while (filtBlockPosts.length < 5);
+
+          // posts = result;
+          const isLast = result.length < 5 ? true : false;
           return res.status(200).json({
             posts,
             isLast,
@@ -187,26 +192,41 @@ class PostHandler {
           });
         }
       } else {
+        let filtBlockPosts: Posts[] = [];
+        let currentLastId = postLastId;
+        let isLast = false;
         // 두번째랜더링
-        const lastPostIdx = ids.findIndex((id) => {
-          return Number(id) === Number(postLastId);
-        });
-        const targetIds = ids.slice(lastPostIdx + 1, lastPostIdx + 6);
 
-        const postJsons = await Promise.all(
-          targetIds.map((id: string) => postCache.get(`post:${id}`)),
-        );
+        do {
+          const lastPostIdx = ids.findIndex((id) => {
+            return Number(id) === Number(currentLastId);
+          });
+          const targetIds = ids.slice(lastPostIdx + 1, lastPostIdx + 6);
 
-        const posts = postJsons.map((post) => JSON.parse(post));
-        const isLast = posts.length < 5 ? true : false;
+          const postJsons = await Promise.all(
+            targetIds.map((id: string) => postCache.get(`post:${id}`)),
+          );
 
-        // const filtBlockPosts = await this.blockUserService.filterBlockedPosts({
-        //   userId,
-        //   posts,
-        // });
+          const posts = postJsons.map((post) => JSON.parse(post));
+
+          if (posts.length === 0) {
+            isLast = true;
+            break;
+          }
+          currentLastId = posts[posts.length - 1].id;
+
+          const filtered = await this.blockUserService.filterBlockedPosts({
+            userId,
+            posts,
+            limit: 5,
+          });
+
+          filtBlockPosts.push(...filtered);
+          isLast = posts.length < 5;
+        } while (filtBlockPosts.length < 5 && !isLast);
 
         return res.status(200).json({
-          posts,
+          posts: filtBlockPosts.slice(0, 5),
           isLast,
           isLikedPostIds,
           isFollowingedUserIds,
