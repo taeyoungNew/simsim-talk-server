@@ -1,6 +1,7 @@
 import {
   BlockUserDto,
   BlockUserListDto,
+  filterBlockedCommtDto,
   FilterBlockedPostsDto,
   FindBlockRelationDto,
   UnBlockUserDto,
@@ -8,6 +9,7 @@ import {
 import UserService from "./usersService";
 import BlockUserRepository from "../repositories/blockUserRepository";
 import logger from "../config/logger";
+import Comments from "../database/models/comments";
 
 class BlockUserService {
   private blockUserRepository = new BlockUserRepository();
@@ -123,9 +125,38 @@ class BlockUserService {
         result = posts.filter((el) => {
           return !blockedIds.has(el.userId);
         });
+
+        result.forEach(async (post) => {
+          post.Comments = await this.filterBlockedCommt({ post, blockedIds });
+        });
       } else {
         result = posts;
       }
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * 차단한유저의 댓글필터
+   */
+  public filterBlockedCommt = async ({
+    blockedIds,
+    post,
+    userId,
+  }: filterBlockedCommtDto) => {
+    logger.info("", {
+      layer: "Service",
+      className: "BlockUserService",
+      functionName: "filterBlockedCommt",
+    });
+    try {
+      if (!blockedIds) blockedIds = await this.getBlockedIds(userId);
+      const result = post.Comments.filter(
+        (com: Comments) => !blockedIds.has(com.userId),
+      );
 
       return result;
     } catch (error) {

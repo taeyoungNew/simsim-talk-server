@@ -21,6 +21,12 @@ export interface FilterBlockedPostsDto {
   lastPostId?: number;
 }
 
+export interface filterBlockedCommtDto {
+  post: Post;
+  blockedIds?: Set<any>;
+  userId?: string;
+}
+
 export interface FindBlockRelationDto {
   myId: string;
   userId: string;

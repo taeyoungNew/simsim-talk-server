@@ -104,7 +104,14 @@ class PostRepository {
       },
       include: {
         model: Comments,
-        attributes: ["id", "postId", "userId", "content", "createdAt"],
+        attributes: [
+          "id",
+          "postId",
+          "userId",
+          "userNickname",
+          "content",
+          "createdAt",
+        ],
       },
       where: { id },
     });
@@ -210,7 +217,14 @@ class PostRepository {
       },
       include: {
         model: Comments,
-        attributes: ["id", "postId", "userId", "content", "createdAt"],
+        attributes: [
+          "id",
+          "postId",
+          "userId",
+          "userNickname",
+          "content",
+          "createdAt",
+        ],
       },
       group: ["Posts.id"],
       where,

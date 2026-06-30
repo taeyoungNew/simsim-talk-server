@@ -161,7 +161,7 @@ class PostHandler {
         await this.cachePosts(result);
         let posts;
         if (result.length != 0) {
-          let filtBlockPosts: Posts[];
+          let filtBlockPosts: Posts[] = [];
           let cursor = 0;
 
           do {
@@ -171,13 +171,14 @@ class PostHandler {
               userId,
               posts,
             });
-            filtBlockPosts.push(...filtered);
+
+            const toJsonFilt = filtered.map((el) => el.toJSON());
+            filtBlockPosts.push(...toJsonFilt);
           } while (filtBlockPosts.length < 5);
 
-          // posts = result;
           const isLast = result.length < 5 ? true : false;
           return res.status(200).json({
-            posts,
+            posts: filtBlockPosts,
             isLast,
             isLikedPostIds,
             isFollowingedUserIds,
@@ -196,7 +197,6 @@ class PostHandler {
         let currentLastId = postLastId;
         let isLast = false;
         // 두번째랜더링
-
         do {
           const lastPostIdx = ids.findIndex((id) => {
             return Number(id) === Number(currentLastId);
@@ -297,6 +297,12 @@ class PostHandler {
           { EX: 600 },
         );
       }
+      result.dataValues.Comments =
+        await this.blockUserService.filterBlockedCommt({
+          post: result,
+          userId,
+        });
+
       // 레디스에 없으면 DB에서 가져오고 redis에도 저장
       res.status(200).json({ data: result });
     } catch (e) {
