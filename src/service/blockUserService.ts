@@ -10,10 +10,14 @@ import UserService from "./usersService";
 import BlockUserRepository from "../repositories/blockUserRepository";
 import logger from "../config/logger";
 import Comments from "../database/models/comments";
+import FollowService from "./followService";
+import { FollowingDto } from "../dtos/followDto";
+import FollowRepository from "../repositories/followRepository";
 
 class BlockUserService {
   private blockUserRepository = new BlockUserRepository();
   private userService = new UserService();
+  private followRepository = new FollowRepository();
 
   /**
    * 내가 차단한 유저의 Id리스트 조회
@@ -75,6 +79,11 @@ class BlockUserService {
       await this.userService.findUserById(blockedId);
 
       await this.blockUserRepository.blockUser(blockUserPayment);
+
+      await this.followRepository.removeRelationship({
+        userId1: blockerId,
+        userId2: blockedId,
+      });
     } catch (error) {
       throw error;
     }
