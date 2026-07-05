@@ -40,7 +40,12 @@ class BlockUserHandler {
 
       await this.blockUserService.blockUser(blockUserPayment);
 
-      return res.status(200).send({ message: "해당유저를 차단하였습니다." });
+      return res
+        .status(200)
+        .json({
+          message: "해당유저를 차단하였습니다.",
+          data: { blockedId: blockUserPayment.blockedId },
+        });
     } catch (error) {
       next(error);
     }
