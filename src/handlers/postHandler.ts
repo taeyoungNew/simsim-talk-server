@@ -198,9 +198,12 @@ class PostHandler {
         let isLast = false;
         // 두번째랜더링
         do {
+          console.log("ids = ", ids);
           const lastPostIdx = ids.findIndex((id) => {
             return Number(id) === Number(currentLastId);
           });
+          console.log("lastPostIdx = ", lastPostIdx);
+
           const targetIds = ids.slice(lastPostIdx + 1, lastPostIdx + 6);
 
           const postJsons = await Promise.all(

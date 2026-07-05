@@ -131,6 +131,7 @@ class BlockUserService {
       const blockedIds = await this.getBlockedIds(userId);
 
       if (blockedIds !== null) {
+        console.log("blockedIds = ", blockedIds);
         result = posts.filter((el) => {
           return !blockedIds.has(el.userId);
         });

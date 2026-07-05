@@ -23,6 +23,7 @@ import { deleteUserPostsCache } from "../common/cacheLocal/userCache/userCacheMo
 import { deletePostsCache } from "../common/cacheLocal/postCache/postCacheModule";
 import PostService from "../service/postService";
 import BlockUserService from "../service/blockUserService";
+import { postCache } from "../common/cacheLocal/postCache";
 
 class UserHandler {
   authService = new AuthService();
@@ -387,10 +388,12 @@ class UserHandler {
 
       // 탈퇴유저의 패스워드확인
       this.authService.validPassword(password, getUserInfo.password);
+
       const getUserPostIds = await this.postService.getUserPostIds(id);
       const postIds = getUserPostIds.map((p: { id: any }) => p.id);
 
       await this.userService.deleteUser(id);
+      await this.removeUserPostsCache(postIds);
       await deleteProfileToR2({
         key: `user-info/background-img/${id}/avatar.webp`,
       });
@@ -403,6 +406,15 @@ class UserHandler {
       next(error);
     }
   };
+
+  private async removeUserPostsCache(postIds: number[]) {
+    await Promise.all(
+      postIds.map(async (id) => {
+        await postCache.del(`post:${id}`);
+        await postCache.lRem("posts:list", 0, id.toString());
+      }),
+    );
+  }
 
   public getBlockedUsers = async (
     req: Request<{}, {}, GetBlockedUsersDto, {}>,
