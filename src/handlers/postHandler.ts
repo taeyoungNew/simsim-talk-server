@@ -171,9 +171,12 @@ class PostHandler {
               userId,
               posts,
             });
-
+            cursor += 5;
             const toJsonFilt = filtered.map((el) => el.toJSON());
             filtBlockPosts.push(...toJsonFilt);
+            if (posts.length === 0) {
+              break;
+            }
           } while (filtBlockPosts.length < 5);
 
           const isLast = result.length < 5 ? true : false;
