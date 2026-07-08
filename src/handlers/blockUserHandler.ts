@@ -40,12 +40,10 @@ class BlockUserHandler {
 
       await this.blockUserService.blockUser(blockUserPayment);
 
-      return res
-        .status(200)
-        .json({
-          message: "해당유저를 차단하였습니다.",
-          data: { blockedId: blockUserPayment.blockedId },
-        });
+      return res.status(200).json({
+        message: "해당유저를 차단하였습니다.",
+        data: { blockedId: blockUserPayment.blockedId, myId: userId },
+      });
     } catch (error) {
       next(error);
     }
@@ -78,28 +76,25 @@ class BlockUserHandler {
     }
   };
 
-  // public blockUserList = async (
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ) => {
-  //   try {
-  //     logger.info("", {
-  //       layer: "Handler",
-  //       className: "BlockUserHandler",
-  //       functionName: "unBlockUser",
-  //     });
-  //     const userId = res.locals.userInfo.userId;
-  //     const blockUserListPayment: BlockUserListDto = {
-  //       userId,
-  //     };
-  //     const blockedUserList =
-  //       await this.blockUserService.blockUserList(blockUserListPayment);
-  //     return res.status(200).json({ datas: blockedUserList });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
+  public blockByMeUserList = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      logger.info("", {
+        layer: "Handler",
+        className: "BlockUserHandler",
+        functionName: "blockByMeUserList",
+      });
+      const userId = res.locals.userInfo.userId;
+
+      const blockedUserList = await this.blockUserService.blockByMe(userId);
+      return res.status(200).json({ datas: blockedUserList });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default BlockUserHandler;
