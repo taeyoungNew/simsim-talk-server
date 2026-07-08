@@ -258,10 +258,13 @@ class UserHandler {
       const myId = res.locals.userInfo?.userId;
       const userId = req.params.userId;
       const result = await this.userService.findUserInfos({ userId, myId });
-      result.dataValues.blockStatus = await this.blockUserService.isBlocked({
-        myId,
-        userId,
-      });
+
+      result.dataValues.blockStatus = myId
+        ? await this.blockUserService.isBlocked({
+            myId,
+            userId,
+          })
+        : false;
 
       result.dataValues.isFollowinged =
         result.dataValues.isFollowinged === 1 ? true : false;
