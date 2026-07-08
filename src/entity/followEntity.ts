@@ -15,3 +15,8 @@ export interface GetFollowingsEntity {
 export interface GetFollowersEntity {
   userId: string;
 }
+
+export interface RemoveRelationshipEntity {
+  userId1: string;
+  userId2: string;
+}

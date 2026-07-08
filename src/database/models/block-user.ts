@@ -24,28 +24,64 @@ class BlockUsers extends Model implements BlockUserAttributes {
         blockerId: {
           allowNull: false,
           type: DataTypes.UUID,
+          onUpdate: "casecade",
+          onDelete: "casecade",
+          references: {
+            model: "Users",
+            key: "id",
+          },
         },
         blockedId: {
           allowNull: false,
           type: DataTypes.UUID,
+          onUpdate: "casecade",
+          onDelete: "casecade",
+          references: {
+            model: "Users",
+            key: "id",
+          },
+        },
+        createdAt: {
+          allowNull: false,
+          type: DataTypes.DATE,
+        },
+        updatedAt: {
+          allowNull: false,
+          type: DataTypes.DATE,
         },
       },
       {
         sequelize: sequelize,
         modelName: "BlockUsers",
-      }
+        tableName: "BlockUsers",
+        timestamps: true,
+        indexes: [
+          {
+            unique: true,
+            fields: ["blockerId", "blockedId"],
+          },
+          {
+            fields: ["blockerId"],
+          },
+          {
+            fields: ["blockedId"],
+          },
+        ],
+      },
     );
     return BlockUsers;
   }
 
   static associate(db: any) {
     BlockUsers.belongsTo(db.Users, {
+      as: "blocker",
       foreignKey: "blockerId",
       targetKey: "id",
       onUpdate: "cascade",
       onDelete: "cascade",
     });
     BlockUsers.belongsTo(db.Users, {
+      as: "blocked",
       foreignKey: "blockedId",
       targetKey: "id",
       onUpdate: "cascade",

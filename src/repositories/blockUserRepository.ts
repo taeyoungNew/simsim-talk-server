@@ -1,13 +1,13 @@
 import {
   BlockUserEntity,
   UnBlockUserEntity,
-  BlockUserListEntity,
+  FindBlockRelationEntity,
 } from "../entity/blockUserEntity";
 import logger from "../config/logger";
-import BlockUser from "../database/models/block-user";
-import Users from "../database/models/users";
-import UserInfos from "../database/models/user-infos";
-import sequelize from "sequelize";
+import db from "../database/models/index";
+import { QueryTypes } from "sequelize";
+
+const { BlockUsers } = db;
 
 class BlockUserRepository {
   /**
@@ -20,7 +20,7 @@ class BlockUserRepository {
       functionName: "blockUser",
     });
     const { blockedId, blockerId } = blockUserPayment;
-    await BlockUser.create({
+    await BlockUsers.create({
       blockerId,
       blockedId,
     });
@@ -36,7 +36,7 @@ class BlockUserRepository {
       functionName: "unBLockUser",
     });
     const { blockedId, blockerId } = unBlockUserPayment;
-    await BlockUser.destroy({
+    await BlockUsers.destroy({
       where: {
         blockerId,
         blockedId,
@@ -47,25 +47,70 @@ class BlockUserRepository {
   /**
    * 자신이 차단한 유저리스트 불러오기
    *
-   * @retrun id, blockerdUserNickname, blockerdUserId
    */
-  // public blockUserList = async (unBlockUserPayment: BlockUserListEntity) => {
-  //   logger.info("", {
-  //     layer: "Repository",
-  //     className: "BlockUserRepository",
-  //     functionName: "blockUserList",
-  //   });
-  //   const { userId } = unBlockUserPayment;
-  //   await BlockUser.findAll({
-  //     attributes: ["id", "createdAt"],
-  //     include: [{ model: Users, required: true, where: {
-  //       id:
-  //     } }],
-  //     where: {
-  //       blockerId: userId,
-  //     },
-  //   });
-  // };
+  public blockByMe = async (userId: string) => {
+    logger.info("", {
+      layer: "Repository",
+      className: "BlockUserRepository",
+      functionName: "blockByMe",
+    });
+    return await db.sequelize.query(
+      `
+      SELECT blockUsers.blockedId,
+	           userInfos.profileUrl,
+             blockUsers.createdAt
+        FROM BlockUsers blockUsers
+        JOIN UserInfos as userInfos
+          ON blockUsers.blockedId = userInfos.userId
+       WHERE blockUsers.blockerId = :userId
+      `,
+      {
+        replacements: { userId },
+        type: QueryTypes.SELECT,
+      },
+    );
+  };
+
+  /**
+   * 자신을 차단한 유저리스트 불러오기
+   *
+   */
+  public blockedMe = async (userId: string) => {
+    logger.info("", {
+      layer: "Repository",
+      className: "BlockUserRepository",
+      functionName: "blockedMe",
+    });
+    return await BlockUsers.findAll({
+      attributes: ["blockerId", "createdAt"],
+      where: {
+        blockedId: userId,
+      },
+    });
+  };
+
+  /**
+   * 내가 상대유저를 차단했는지의 여부구하기
+   *
+   */
+  public findBlockRelation = async ({
+    myId,
+    userId,
+  }: FindBlockRelationEntity) => {
+    logger.info("", {
+      layer: "Repository",
+      className: "BlockUserRepository",
+      functionName: "findBlockRelation",
+    });
+
+    const result = await BlockUsers.findOne({
+      where: {
+        blockerId: myId,
+        blockedId: userId,
+      },
+    });
+    return !!result;
+  };
 }
 
 export default BlockUserRepository;

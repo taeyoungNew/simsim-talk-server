@@ -17,10 +17,12 @@ import { userPostsCache } from "../common/cacheLocal/userPostsCache";
 import { CustomError } from "../errors/customError";
 import errorCodes from "../constants/error-codes.json";
 import FollowService from "../service/followService";
-// dotenv.config();
+import BlockUserService from "../service/blockUserService";
+
 class PostHandler {
   postService = new PostService();
   followService = new FollowService();
+  blockUserService = new BlockUserService();
   // 게시물 작성
   public createPost: RequestHandler = async (
     req: Request<{}, {}, CreatePostDto, {}>,
@@ -126,19 +128,18 @@ class PostHandler {
     res: Response,
     next: NextFunction,
   ) => {
+    logger.info("", {
+      method: "get",
+      url: "api/post/",
+      layer: "Handlers",
+      className: "PostHandler",
+      functionName: "getAllPosts",
+    });
     try {
-      logger.info("", {
-        method: "get",
-        url: "api/post/",
-        layer: "Handlers",
-        className: "PostHandler",
-        functionName: "getAllPosts",
-      });
       console.time("after-db");
+
       const postLastId = Number(req.query.postLastId);
-
       const userId = res.locals.userInfo?.userId;
-
       const ids: [] = await postCache.lRange("posts:list", 0, -1);
 
       let isLikedPostIds;
@@ -155,16 +156,36 @@ class PostHandler {
       console.timeEnd("after-db");
       // 첫랜더링
       if (ids.length === 0) {
-        result = await this.postService.getAllPosts(userId);
+        result = await this.postService.getAllPosts({ userId });
 
         await this.cachePosts(result);
         let posts;
         if (result.length != 0) {
-          posts = result.splice(0, 5);
-          const isLast = posts.length < 5 ? true : false;
-          return res
-            .status(200)
-            .json({ posts, isLast, isLikedPostIds, isFollowingedUserIds });
+          let filtBlockPosts: Posts[] = [];
+          let cursor = 0;
+
+          do {
+            posts = result.splice(cursor + 1, cursor + 5);
+
+            const filtered = await this.blockUserService.filterBlockedPosts({
+              userId,
+              posts,
+            });
+            cursor += 5;
+            const toJsonFilt = filtered.map((el) => el.toJSON());
+            filtBlockPosts.push(...toJsonFilt);
+            if (posts.length === 0) {
+              break;
+            }
+          } while (filtBlockPosts.length < 5);
+
+          const isLast = result.length < 5 ? true : false;
+          return res.status(200).json({
+            posts: filtBlockPosts,
+            isLast,
+            isLikedPostIds,
+            isFollowingedUserIds,
+          });
         } else {
           // ✨ 데이터가 없을 때도 응답을 보내야 함!
           return res.status(200).json({
@@ -175,22 +196,47 @@ class PostHandler {
           });
         }
       } else {
+        let filtBlockPosts: Posts[] = [];
+        let currentLastId = postLastId;
+        let isLast = false;
         // 두번째랜더링
-        const lastPostIdx = ids.findIndex((id) => {
-          return Number(id) === Number(postLastId);
+        do {
+          console.log("ids = ", ids);
+          const lastPostIdx = ids.findIndex((id) => {
+            return Number(id) === Number(currentLastId);
+          });
+          console.log("lastPostIdx = ", lastPostIdx);
+
+          const targetIds = ids.slice(lastPostIdx + 1, lastPostIdx + 6);
+
+          const postJsons = await Promise.all(
+            targetIds.map((id: string) => postCache.get(`post:${id}`)),
+          );
+
+          const posts = postJsons.map((post) => JSON.parse(post));
+
+          if (posts.length === 0) {
+            isLast = true;
+            break;
+          }
+          currentLastId = posts[posts.length - 1].id;
+
+          const filtered = await this.blockUserService.filterBlockedPosts({
+            userId,
+            posts,
+            limit: 5,
+          });
+
+          filtBlockPosts.push(...filtered);
+          isLast = posts.length < 5;
+        } while (filtBlockPosts.length < 5 && !isLast);
+
+        return res.status(200).json({
+          posts: filtBlockPosts.slice(0, 5),
+          isLast,
+          isLikedPostIds,
+          isFollowingedUserIds,
         });
-        const targetIds = ids.slice(lastPostIdx + 1, lastPostIdx + 6);
-
-        const postJsons = await Promise.all(
-          targetIds.map((id: string) => postCache.get(`post:${id}`)),
-        );
-
-        const posts = postJsons.map((post) => JSON.parse(post));
-        const isLast = posts.length < 5 ? true : false;
-
-        return res
-          .status(200)
-          .json({ posts, isLast, isLikedPostIds, isFollowingedUserIds });
       }
     } catch (e) {
       next(e);
@@ -257,6 +303,12 @@ class PostHandler {
           { EX: 600 },
         );
       }
+      result.dataValues.Comments =
+        await this.blockUserService.filterBlockedCommt({
+          post: result,
+          userId,
+        });
+
       // 레디스에 없으면 DB에서 가져오고 redis에도 저장
       res.status(200).json({ data: result });
     } catch (e) {

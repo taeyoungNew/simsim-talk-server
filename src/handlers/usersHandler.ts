@@ -22,12 +22,15 @@ import {
 import { deleteUserPostsCache } from "../common/cacheLocal/userCache/userCacheModule";
 import { deletePostsCache } from "../common/cacheLocal/postCache/postCacheModule";
 import PostService from "../service/postService";
+import BlockUserService from "../service/blockUserService";
+import { postCache } from "../common/cacheLocal/postCache";
 
 class UserHandler {
   authService = new AuthService();
   postService = new PostService();
   userService = new UserService();
   followService = new FollowService();
+  blockUserService = new BlockUserService();
   /**
    * 회원가입
    *
@@ -232,7 +235,7 @@ class UserHandler {
   };
 
   /**
-   * 특정유저의 정보가져오기
+   * 특정유저의 정보가져오기(유저페이지)
    *
    * @param req
    * @param res
@@ -253,9 +256,12 @@ class UserHandler {
       });
 
       const myId = res.locals.userInfo?.userId;
-
       const userId = req.params.userId;
       const result = await this.userService.findUserInfos({ userId, myId });
+      result.dataValues.blockStatus = await this.blockUserService.isBlocked({
+        myId,
+        userId,
+      });
 
       result.dataValues.isFollowinged =
         result.dataValues.isFollowinged === 1 ? true : false;
@@ -382,10 +388,12 @@ class UserHandler {
 
       // 탈퇴유저의 패스워드확인
       this.authService.validPassword(password, getUserInfo.password);
+
       const getUserPostIds = await this.postService.getUserPostIds(id);
       const postIds = getUserPostIds.map((p: { id: any }) => p.id);
 
       await this.userService.deleteUser(id);
+      await this.removeUserPostsCache(postIds);
       await deleteProfileToR2({
         key: `user-info/background-img/${id}/avatar.webp`,
       });
@@ -398,6 +406,15 @@ class UserHandler {
       next(error);
     }
   };
+
+  private async removeUserPostsCache(postIds: number[]) {
+    await Promise.all(
+      postIds.map(async (id) => {
+        await postCache.del(`post:${id}`);
+        await postCache.lRem("posts:list", 0, id.toString());
+      }),
+    );
+  }
 
   public getBlockedUsers = async (
     req: Request<{}, {}, GetBlockedUsersDto, {}>,

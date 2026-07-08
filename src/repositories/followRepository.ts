@@ -2,9 +2,11 @@ import {
   FollowingEntity,
   GetFollowersEntity,
   GetFollowingsEntity,
+  RemoveRelationshipEntity,
   StopFollowingEntity,
 } from "../entity/followEntity";
 import db from "../database/models/index";
+import { Op } from "sequelize";
 import logger from "../config/logger";
 import UserInfos from "../database/models/user-infos";
 
@@ -122,7 +124,35 @@ class FollowRepository {
     }
   };
 
-  // 차단?
+  // 차단시 양방향팔로잉취소
+  public removeRelationship = async ({
+    userId1,
+    userId2,
+  }: RemoveRelationshipEntity) => {
+    logger.info("", {
+      layer: "Repository",
+      className: "FollowRepository",
+      functionName: "removeRelationship",
+    });
+    try {
+      await Follows.destroy({
+        where: {
+          [Op.or]: [
+            {
+              followerId: userId1,
+              followingId: userId2,
+            },
+            {
+              followerId: userId2,
+              followingId: userId1,
+            },
+          ],
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 export default FollowRepository;

@@ -156,8 +156,7 @@ class FollowService {
     }
   };
 
-  // 상대방을 팔로잉
-  // 상대방을 팔로잉하고있는지 확인
+  // 상대방을 언팔로잉하고있는지 확인
   public checkUnFollowingUser = async (
     followingId: FollowingDto,
   ): Promise<void> => {

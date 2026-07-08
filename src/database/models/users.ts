@@ -55,7 +55,7 @@ class Users extends Model implements UsersAttributes {
       {
         sequelize: sequelize,
         modelName: "Users",
-      }
+      },
     );
     return Users;
   }
@@ -74,19 +74,19 @@ class Users extends Model implements UsersAttributes {
       onUpdate: "cascade",
       onDelete: "cascade",
     });
-    Users.belongsToMany(db.BlockUsers, {
-      as: "blockerId",
-      through: "BlockUsers",
-      onUpdate: "cascade",
-      onDelete: "cascade",
-    });
+    // Users.belongsToMany(db.BlockUsers, {
+    //   as: "blockerId",
+    //   through: "BlockUsers",
+    //   onUpdate: "cascade",
+    //   onDelete: "cascade",
+    // });
 
-    Users.belongsToMany(db.BlockUsers, {
-      as: "blockedId",
-      through: "BlockUsers",
-      onUpdate: "cascade",
-      onDelete: "cascade",
-    });
+    // Users.belongsToMany(db.BlockUsers, {
+    //   as: "blockedId",
+    //   through: "BlockUsers",
+    //   onUpdate: "cascade",
+    //   onDelete: "cascade",
+    // });
 
     Users.belongsToMany(db.CommentLikes, {
       through: "CommentLikes",
