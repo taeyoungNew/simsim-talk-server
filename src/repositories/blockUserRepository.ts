@@ -58,6 +58,7 @@ class BlockUserRepository {
       `
       SELECT blockUsers.blockedId,
 	           userInfos.profileUrl,
+             userInfos.nickname,
              blockUsers.createdAt
         FROM BlockUsers blockUsers
         JOIN UserInfos as userInfos
