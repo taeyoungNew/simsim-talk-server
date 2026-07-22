@@ -21,11 +21,11 @@ blockUserRouter.delete(
   blockUserHandler.unBlockUser,
 );
 // 자신이 차단한 유저리스트가져오기
-// blockUserRouter.get(
-//   "/blocked-list",
-//   isLogoutMiddleware,
-//   authMiddleware,
-//   blockUserHandler.blockUserList
-// );
+blockUserRouter.get(
+  "/blocked-list",
+  isLogoutMiddleware,
+  authMiddleware,
+  blockUserHandler.blockByMeUserList,
+);
 
 export default blockUserRouter;

@@ -68,9 +68,10 @@ class BlockUserHandler {
 
       await this.blockUserService.unBLockUser(unBlockUserPayment);
 
-      return res
-        .status(200)
-        .send({ message: "해당유저의 차단을 해제하였습니다." });
+      return res.status(200).json({
+        message: "해당유저의 차단을 해제하였습니다.",
+        data: { blockedId: unBlockUserPayment.blockedId, myId: userId },
+      });
     } catch (error) {
       next(error);
     }
