@@ -27,7 +27,7 @@ const verifyAccToken = (tokenPayment: tokenType) => {
     return decoded;
   } catch (error: any) {
     if (error.name === "TokenExpiredError") {
-      return "jwt exired";
+      return "jwt expired";
     }
   }
 };

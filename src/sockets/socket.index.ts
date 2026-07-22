@@ -35,7 +35,7 @@ export const setupSocket = (server: any) => {
     });
     socket.emit("connection", "socket connected!");
 
-    if (decodeAccToken && decodeAccToken != "jwt exired") {
+    if (decodeAccToken && decodeAccToken != "jwt expired") {
       userId = decodeAccToken?.userId;
       socket.data.userId = userId;
 
@@ -74,7 +74,7 @@ export const setupSocket = (server: any) => {
     socket.on("getMsgAlarms", async (_, ack) => {
       const decodeAccToken = decodeSocketUser(socket);
 
-      if (decodeAccToken && decodeAccToken != "jwt exired") {
+      if (decodeAccToken && decodeAccToken != "jwt expired") {
         userId = decodeAccToken?.userId;
         const messageAlarmRepository = new MessagealarmsRepository();
         const getMsgAlarms =
@@ -89,7 +89,7 @@ export const setupSocket = (server: any) => {
     socket.on("msgAlarmsRead", async (param) => {
       const decodeAccToken = decodeSocketUser(socket);
       const { chatRoomId } = param;
-      if (decodeAccToken && decodeAccToken != "jwt exired") {
+      if (decodeAccToken && decodeAccToken != "jwt expired") {
         userId = decodeAccToken?.userId;
 
         const sockets = onlineUsers.get(userId);

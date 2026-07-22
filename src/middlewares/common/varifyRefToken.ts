@@ -19,7 +19,7 @@ const verifyRefToken = (tokenPayment: tokenType) => {
       if (err) {
         switch (err.name) {
           case "TokenExpiredError":
-            return "jwt exired";
+            return "jwt expired";
         }
       }
       return decoded;

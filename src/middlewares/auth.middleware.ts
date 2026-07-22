@@ -49,7 +49,10 @@ export const authMiddleware = async (
     // acctoken이 유효한지 확인
     const decodeAccToken = verifyAccToken(accTokenPayment);
 
-    if (typeof decodeAccToken === "string" && decodeAccToken === "jwt exired") {
+    if (
+      typeof decodeAccToken === "string" &&
+      decodeAccToken === "jwt expired"
+    ) {
       logger.warn("acc토큰이 만료", {
         layer: "middleware",
         functionName: "authMiddleware",
@@ -90,7 +93,7 @@ export const authMiddleware = async (
       // refToken이 만료되었을 경우
       if (
         typeof decodeRefToken === "string" &&
-        decodeRefToken === "jwt exired"
+        decodeRefToken === "jwt expired"
       ) {
         // 리플레쉬토큰까지 만료가되었을 시 캐시의 정보도 같이 지워준다.
         logger.error("토큰이 만료되어 다시 로그인해주십시오.", {
@@ -148,7 +151,8 @@ export const authMiddleware = async (
           sameSite: isProd ? "lax" : "none",
           maxAge: 1000 * 60 * 30,
           domain: isProd ? ".simsimtalk.com" : undefined,
-          expires: new Date(Date.now() + 1000 * 60 * 30),
+          // expires: new Date(Date.now() + 1000 * 60 * 30),
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 2),
         });
         next();
       }
