@@ -14,6 +14,23 @@ import FollowService from "./followService";
 import { FollowingDto } from "../dtos/followDto";
 import FollowRepository from "../repositories/followRepository";
 
+type MessageType = "TEXT" | "IMAGE" | "FILE" | "SYSTEM";
+
+interface ChatRoomType {
+  chatRoomId: string;
+  targetUserId: string;
+  targetUserEmail: string;
+  targetUserNickname: string;
+  lastMessagePreview: string;
+  lastMessageType: MessageType;
+  lastMessageAt: string;
+  isBlocked: boolean;
+}
+
+interface ChatList {
+  chatList: ChatRoomType[];
+}
+
 class BlockUserService {
   private blockUserRepository = new BlockUserRepository();
   private userService = new UserService();
@@ -104,6 +121,36 @@ class BlockUserService {
       await this.userService.findUserById(blockedId);
 
       await this.blockUserRepository.unBLockUser(unBlockUserPayment);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * 채팅리스트
+   */
+
+  public blockChatListFilter = async (userId: string, param: ChatList) => {
+    logger.info("", {
+      layer: "Service",
+      className: "BlockUserService",
+      functionName: "blockChatListFilter",
+    });
+
+    try {
+      let result;
+      const blockedIds = await this.getBlockedIds(userId);
+      const { chatList } = param;
+      console.log(typeof chatList);
+
+      result = chatList.map((el) => {
+        if (blockedIds.has(el.targetUserId)) return (el.isBlocked = true);
+
+        el.isBlocked = false;
+        return el;
+      });
+
+      return result;
     } catch (error) {
       throw error;
     }

@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import logger from "../config/logger";
 import ChatService from "../service/chatService";
+import BlockUserService from "../service/blockUserService";
 class ChatHandler {
   private chatService = new ChatService();
+  private blockService = new BlockUserService();
   public getChatList = async (
     req: Request,
     res: Response,
@@ -18,7 +20,15 @@ class ChatHandler {
     try {
       const userId = res.locals.userInfo?.userId;
       const result = userId ? await this.chatService.getChatList(userId) : [];
-      return res.status(200).json(result);
+
+      const blockChatListFilter = await this.blockService.blockChatListFilter(
+        userId,
+        { chatList: result },
+      );
+
+      console.log("blockChatListFilter = ", blockChatListFilter);
+
+      return res.status(200).json(blockChatListFilter);
     } catch (e) {
       next(e);
     }
