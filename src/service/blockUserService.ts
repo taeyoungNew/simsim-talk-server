@@ -31,6 +31,14 @@ interface ChatList {
   chatList: ChatRoomType[];
 }
 
+interface ChatRoom {
+  createdAt: string;
+  targetUserEmail: string;
+  chatRoomId: string;
+  isNew: boolean;
+  isBlocked: boolean;
+}
+
 class BlockUserService {
   private blockUserRepository = new BlockUserRepository();
   private userService = new UserService();
@@ -129,7 +137,6 @@ class BlockUserService {
   /**
    * 채팅리스트
    */
-
   public blockChatListFilter = async (userId: string, param: ChatList) => {
     logger.info("", {
       layer: "Service",
@@ -141,16 +148,44 @@ class BlockUserService {
       let result;
       const blockedIds = await this.getBlockedIds(userId);
       const { chatList } = param;
-      console.log(typeof chatList);
 
       result = chatList.map((el) => {
-        if (blockedIds.has(el.targetUserId)) return (el.isBlocked = true);
+        if (blockedIds.has(el.targetUserId)) {
+          el.isBlocked = true;
+          return el;
+        }
 
         el.isBlocked = false;
         return el;
       });
 
       return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * 채팅방유저의 차단여부
+   */
+  public blockChatRoomFilter = async (
+    userId: string,
+    targetUserId: string,
+    chatRoom: ChatRoom,
+  ) => {
+    logger.info("", {
+      layer: "Service",
+      className: "BlockUserService",
+      functionName: "blockChatListFilter",
+    });
+
+    try {
+      const blockedIds = await this.getBlockedIds(userId);
+      blockedIds.has(targetUserId)
+        ? (chatRoom.isBlocked = true)
+        : (chatRoom.isBlocked = false);
+
+      return chatRoom;
     } catch (error) {
       throw error;
     }

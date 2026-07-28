@@ -28,7 +28,9 @@ class ChatHandler {
 
       console.log("blockChatListFilter = ", blockChatListFilter);
 
-      return res.status(200).json(blockChatListFilter);
+      // console.log("blockChatListFilter = ", blockChatListFilter);
+
+      return res.status(200).json(result);
     } catch (e) {
       next(e);
     }
@@ -53,11 +55,17 @@ class ChatHandler {
         userId,
         targetUserId,
       });
+      const blockChatRoom = await this.blockService.blockChatRoomFilter(
+        userId,
+        targetUserId,
+        result,
+      );
       return res.status(200).json({
-        createdAt: result.createdAt,
-        targetUserEmail: result.targetUserEmail,
-        chatRoomId: result.chatRoomId,
-        isNew: result.isNew,
+        createdAt: blockChatRoom.createdAt,
+        targetUserEmail: blockChatRoom.targetUserEmail,
+        chatRoomId: blockChatRoom.chatRoomId,
+        isNew: blockChatRoom.isNew,
+        isBlocked: blockChatRoom.isBlocked,
       });
     } catch (e) {
       next(e);
