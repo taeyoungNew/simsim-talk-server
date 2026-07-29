@@ -19,8 +19,10 @@ import { onlineUsers } from "./onlineUsers.store";
 import { isUserOnline } from "./onlineUsers.service";
 import verifyAccToken from "../middlewares/common/varifyAccToken";
 import { tokenType } from "../types/tokenType";
+import BlockService from "../service/blockUserService";
 
 export const setupSocket = (server: any) => {
+  const blockService = new BlockService();
   const socketIdToUserId = new Map<string, string>();
   let userId: string;
 
@@ -106,6 +108,28 @@ export const setupSocket = (server: any) => {
     socket.on("sendMessage", async (param) => {
       let isJoined = false;
       const { targetUserId, chatRoomId } = param;
+      const rawCookie = socket.request.headers.cookie;
+      if (!rawCookie) return;
+      const parsed = cookie.parse(rawCookie);
+
+      const auth = parsed.authorization;
+
+      if (!auth) return;
+      const [type, token] = auth.split(" ");
+      const accTokenPayment: tokenType = {
+        token: token,
+        type: "accToken",
+      };
+      const decodeToken = verifyAccToken(accTokenPayment);
+      let blockedList;
+      if (decodeToken !== "jwt expired")
+        blockedList = blockService.getBlockedIds(decodeToken.userId);
+      if ((await blockedList).has(targetUserId)) {
+        socket.emit("error", {
+          message: "차단된 사용자와는 채팅할 수 없습니다.",
+        });
+        return;
+      }
 
       const receiverSocketInfo = onlineUsers.get(targetUserId);
       const room = io.sockets.adapter.rooms.get(chatRoomId);

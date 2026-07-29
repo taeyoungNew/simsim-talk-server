@@ -26,11 +26,7 @@ class ChatHandler {
         { chatList: result },
       );
 
-      console.log("blockChatListFilter = ", blockChatListFilter);
-
-      // console.log("blockChatListFilter = ", blockChatListFilter);
-
-      return res.status(200).json(result);
+      return res.status(200).json(blockChatListFilter);
     } catch (e) {
       next(e);
     }
