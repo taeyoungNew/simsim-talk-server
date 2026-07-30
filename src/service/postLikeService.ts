@@ -13,11 +13,13 @@ import { SaveAlarmEntity } from "../entity/alarmEntity";
 import { socketGateway } from "../sockets/socket.gateway";
 import { SaveAlarmDto } from "../dtos/alarmsDto";
 import UserService from "./usersService";
+import BlockUserService from "./blockUserService";
 class PostLikeService {
   private postLikeRepository = new PostLikeRepository();
   private postService = new PostService();
   private alarmsRepository = new AlarmsRepository();
   private userService = new UserService();
+  private blockUserService = new BlockUserService();
 
   // 게시물 좋아요
   public postLike = async (params: PostLikeDto) => {
@@ -28,6 +30,18 @@ class PostLikeService {
         functionName: "postLike",
       });
       const result = await this.postService.existPost(params);
+      // 해당유저를 차단하고있는지
+      const getBlockedIds = await this.blockUserService.getBlockedIds(
+        params.userId,
+      );
+      if (getBlockedIds.has(result.userId)) {
+        throw new CustomError(
+          errorCodes.FOLLOW.FOLLOWING_ALREADY_EXISTS.status,
+          errorCodes.FOLLOW.FOLLOWING_ALREADY_EXISTS.code,
+          "차단된 유저의 게시물에 좋아요를 누를수 없습니다.",
+        );
+      }
+
       await this.checkPostLike(params);
       const likeResult = await this.postLikeRepository.postLike(params);
       const alarmPayment: SaveAlarmEntity = {

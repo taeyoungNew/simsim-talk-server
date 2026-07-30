@@ -13,11 +13,13 @@ import { SaveAlarmEntity } from "../entity/alarmEntity";
 import { socketGateway } from "../sockets/socket.gateway";
 import { SaveAlarmDto } from "../dtos/alarmsDto";
 import AlarmsRepository from "../repositories/alarmRepository";
+import BlockUserService from "./blockUserService";
 
 class FollowService {
   private followRepository = new FollowRepository();
   private userService = new UserService();
   private alarmsRepository = new AlarmsRepository();
+  private blockUserService = new BlockUserService();
   // 팔로잉하기
   public following = async (params: FollowingDto) => {
     try {
@@ -30,6 +32,19 @@ class FollowService {
       const targetUser = await this.userService.findUserById(
         params.followingId,
       );
+      // 해당유저를 차단하고있는지
+      const getBlockedIds = await this.blockUserService.getBlockedIds(
+        params.userId,
+      );
+      console.log("targetUser = ", targetUser);
+
+      if (getBlockedIds.has(targetUser.id)) {
+        throw new CustomError(
+          errorCodes.FOLLOW.FOLLOWING_ALREADY_EXISTS.status,
+          errorCodes.FOLLOW.FOLLOWING_ALREADY_EXISTS.code,
+          "차단된 유저는 팔로잉할수 없습니다.",
+        );
+      }
 
       // 이미 팔로잉하고있는지
       await this.checkFollowingUser(params);

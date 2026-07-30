@@ -15,6 +15,7 @@ import { GetPostDto } from "../dtos/PostDto";
 import { userPostsCache } from "../common/cacheLocal/userPostsCache";
 import errorCodes from "../constants/error-codes.json";
 import { CustomError } from "../errors/customError";
+import BlockUserService from "../service/blockUserService";
 interface Comment {
   id: number;
   userId: string;
@@ -26,13 +27,14 @@ interface Comment {
  * Comment handler
  */
 class CommentHandler {
+  private blockUserService = new BlockUserService();
   private commentService = new CommentService();
   private postService = new PostService();
   // 댓글작성
   public createComent = async (
     req: Request<{ postId: string }, {}, { comment: string }, {}>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       logger.info("", {
@@ -46,17 +48,18 @@ class CommentHandler {
       // 유저의 id가져오기
       const userId = res.locals.userInfo.userId;
       const postId = req.params.postId;
+
       const { authorization } = req.cookies;
       const [_, token] = authorization.split(" ");
       const getUserLoginInfo = JSON.parse(
-        await userCache.get(`token:${token}`)
+        await userCache.get(`token:${token}`),
       );
 
       if (!commentContentExp(req.body.comment))
         throw new CustomError(
           errorCodes.COMMENT.VALIDATION_ERROR.status,
           errorCodes.COMMENT.VALIDATION_ERROR.code,
-          "200자내로 적어주세요."
+          "200자내로 적어주세요.",
         );
 
       // 댓글의 형식검사
@@ -120,7 +123,7 @@ class CommentHandler {
   public modifyComment = async (
     req: Request<{ commentId: string }, {}, ModifyCommentDto, {}>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       logger.info("", {
@@ -137,7 +140,7 @@ class CommentHandler {
         throw new CustomError(
           errorCodes.COMMENT.VALIDATION_ERROR.status,
           errorCodes.COMMENT.VALIDATION_ERROR.code,
-          "200자내로 적어주세요."
+          "200자내로 적어주세요.",
         );
 
       const payment: ModifyCommentDto = {
@@ -187,7 +190,7 @@ class CommentHandler {
   public getComment = async (
     req: Request<{ commentId: number }, {}, {}, {}>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       logger.info("", {
@@ -213,7 +216,7 @@ class CommentHandler {
   public deleteComment = async (
     req: Request<{ commentId: string; postId: string }, {}, DeleteCommentDto>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     logger.info("", {
       method: "delete",
@@ -247,7 +250,7 @@ class CommentHandler {
         const postTtl = await postCache.ttl(`posts:list`);
         const postParse = await JSON.parse(post);
         postParse.Comments = postParse.Comments.filter(
-          (el: Comment) => el.id != Number(commentId)
+          (el: Comment) => el.id != Number(commentId),
         );
         await postCache.set(`post:${postId}`, JSON.stringify(postParse), {
           EX: postTtl,
