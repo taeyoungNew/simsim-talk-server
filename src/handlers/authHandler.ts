@@ -69,9 +69,8 @@ class AuthHandler {
         httpOnly: true,
         secure: true,
         sameSite: isProd ? "lax" : "none",
-        maxAge: 1000 * 60 * 30,
+        maxAge: 1000 * 60 * 60 * 2,
         domain: isProd ? ".simsimtalk.com" : undefined,
-        // expires: new Date(Date.now() + 1000 * 60 * 30),
         expires: new Date(Date.now() + 1000 * 60 * 60 * 2),
       });
       logger.info("로그인되었습니다.", {

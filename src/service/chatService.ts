@@ -44,6 +44,7 @@ class ChatService {
       targetUserEmail: targetUserInfo.email,
       chatRoomId: chatRoom.id,
       isNew,
+      isBlocked: false,
     };
   };
 

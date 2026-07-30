@@ -14,6 +14,31 @@ import FollowService from "./followService";
 import { FollowingDto } from "../dtos/followDto";
 import FollowRepository from "../repositories/followRepository";
 
+type MessageType = "TEXT" | "IMAGE" | "FILE" | "SYSTEM";
+
+interface ChatRoomType {
+  chatRoomId: string;
+  targetUserId: string;
+  targetUserEmail: string;
+  targetUserNickname: string;
+  lastMessagePreview: string;
+  lastMessageType: MessageType;
+  lastMessageAt: string;
+  isBlocked: boolean;
+}
+
+interface ChatList {
+  chatList: ChatRoomType[];
+}
+
+interface ChatRoom {
+  createdAt: string;
+  targetUserEmail: string;
+  chatRoomId: string;
+  isNew: boolean;
+  isBlocked: boolean;
+}
+
 class BlockUserService {
   private blockUserRepository = new BlockUserRepository();
   private userService = new UserService();
@@ -104,6 +129,63 @@ class BlockUserService {
       await this.userService.findUserById(blockedId);
 
       await this.blockUserRepository.unBLockUser(unBlockUserPayment);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * 채팅리스트
+   */
+  public blockChatListFilter = async (userId: string, param: ChatList) => {
+    logger.info("", {
+      layer: "Service",
+      className: "BlockUserService",
+      functionName: "blockChatListFilter",
+    });
+
+    try {
+      let result;
+      const blockedIds = await this.getBlockedIds(userId);
+      const { chatList } = param;
+
+      result = chatList.map((el) => {
+        if (blockedIds.has(el.targetUserId)) {
+          el.isBlocked = true;
+          return el;
+        }
+
+        el.isBlocked = false;
+        return el;
+      });
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * 채팅방유저의 차단여부
+   */
+  public blockChatRoomFilter = async (
+    userId: string,
+    targetUserId: string,
+    chatRoom: ChatRoom,
+  ) => {
+    logger.info("", {
+      layer: "Service",
+      className: "BlockUserService",
+      functionName: "blockChatListFilter",
+    });
+
+    try {
+      const blockedIds = await this.getBlockedIds(userId);
+      blockedIds.has(targetUserId)
+        ? (chatRoom.isBlocked = true)
+        : (chatRoom.isBlocked = false);
+
+      return chatRoom;
     } catch (error) {
       throw error;
     }
