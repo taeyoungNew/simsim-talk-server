@@ -16,8 +16,10 @@ import { socketGateway } from "../sockets/socket.gateway";
 import AlarmsRepository from "../repositories/alarmRepository";
 import { SaveAlarmDto } from "../dtos/alarmsDto";
 import UserService from "./usersService";
+import BlockUserService from "./blockUserService";
 
 class CommentService {
+  private blockUserService = new BlockUserService();
   private postService = new PostService();
   private alarmsRepository = new AlarmsRepository();
   private commentRepository = new CommentRepository();
@@ -32,6 +34,17 @@ class CommentService {
       });
       // 게시물이 있는지 확인
       const isPost = await this.postService.existPost(params);
+      const getBlockedIds = await this.blockUserService.getBlockedIds(
+        params.userId,
+      );
+
+      if (getBlockedIds.has(isPost.userId)) {
+        throw new CustomError(
+          errorCodes.FOLLOW.FOLLOWING_ALREADY_EXISTS.status,
+          errorCodes.FOLLOW.FOLLOWING_ALREADY_EXISTS.code,
+          "차단된 유저의 게시물에 댓글을 달수없습니다.",
+        );
+      }
 
       const commentResult = await this.commentRepository.createComment(params);
       const alarmPayment: SaveAlarmEntity = {

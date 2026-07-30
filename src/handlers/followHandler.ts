@@ -3,6 +3,7 @@ import { FollowingDto } from "../dtos/followDto";
 import { userCache } from "../common/cacheLocal/userIdCache";
 import FollowService from "../service/followService";
 import logger from "../config/logger";
+import BlockUserService from "../service/blockUserService";
 
 class FollowHandler {
   private followService = new FollowService();
@@ -10,7 +11,7 @@ class FollowHandler {
   public following = async (
     req: Request<{ followingId: string }, {}, { isMyPage: boolean }, {}>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       logger.info("", {
@@ -21,11 +22,13 @@ class FollowHandler {
         functionName: "following",
       });
       const isMyPage = req.body.isMyPage;
+      const userId = res.locals.userInfo.userId;
+      const followingId = req.params.followingId;
 
       const payment: FollowingDto = {
         isMyPage: isMyPage,
-        userId: res.locals.userInfo.userId,
-        followingId: req.params.followingId,
+        userId,
+        followingId,
       };
 
       // 내 페이지에서 팔로잉을 했을경우 팔로잉한유저의 정보를 리턴
@@ -43,7 +46,7 @@ class FollowHandler {
   public stopFollowing = async (
     req: Request<{ followingId: string }, {}, { isMypage: boolean }, {}>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       logger.info("", {
@@ -74,7 +77,7 @@ class FollowHandler {
   public getFollowings = async (
     req: Request<{}, {}, {}, {}>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       logger.info("", {
@@ -96,7 +99,7 @@ class FollowHandler {
   public getFollowers = async (
     req: Request<{}, {}, {}, {}>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
       logger.info("", {

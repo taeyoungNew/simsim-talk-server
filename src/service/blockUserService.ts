@@ -256,7 +256,7 @@ class BlockUserService {
     }
   };
 
-  // 나를 차단한 나에게 차단당한 유저id리스트 가져오기
+  // 나를 차단한 OR 나에게 차단당한 유저id리스트 가져오기
   public getBlockedIds = async (userId: string) => {
     logger.info("", {
       layer: "Service",
