@@ -24,13 +24,17 @@ Cloudflare R2
 
 # 4. Key Features
 
-- HttpOnly Cookie JWT
-- Socket.io realtime chatting
-- Socket.io realtime alarms
-- Redis Cache memories
-- Suggested Self Join SQL
+- JWT Authentication (HttpOnly Cookie)
+- Refresh Token Reissue
+- Socket.io Realtime Chat
+- Socket.io Realtime Notification
+- Online User Management
+- Redis Cache Strategy
+- Infinite Scroll Cursor Pagination
+- User Blocking Policy
+- PairKey ChatRoom Duplicate Prevention
+- Cloudflare R2 Image Storage
 - Socket Authorization
-- PairKey chatroom duplicate prevention
 
 # 5. Database Design
 

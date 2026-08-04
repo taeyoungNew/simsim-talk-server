@@ -19,19 +19,17 @@ Cloudflare R2
 
 # ✨ Key Features
 
-HttpOnly Cookie JWT認証
-
-Socket.io リアルタイムチャット
-
-Socket.io リアルタイム通知
-
-Redis ユーザーキャッシュ
-
-自己結合SQLによる友達推薦
-
-Socket認証
-
-PairKeyによるチャットルーム重複防止
+- HttpOnly Cookie JWT認証
+- リフレッシュトークン再発行
+- Socket.io リアルタイムチャット
+- Socket.io リアルタイム通知
+- オンラインユーザー管理
+- Redis キャッシュ戦略
+- カーソルベース無限スクロール
+- 双方向ユーザーブロック機能
+- PairKeyによるチャットルーム重複防止
+- Cloudflare R2画像ストレージ
+- Socket認証
 
 # 🗄 Database Design
 
