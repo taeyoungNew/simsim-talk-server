@@ -13,6 +13,7 @@ import { errorHandler } from "./middlewares/errorHandler.middleware";
 import cors from "cors";
 import http from "http";
 import { setupSocket } from "./sockets/socket.index";
+import { connectElastic } from "./elasticsearch/elasticSearchTest";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -66,6 +67,7 @@ app.use(errorHandler);
 
 const server = http.createServer(app);
 
+connectElastic();
 setupSocket(server);
 server.listen(PORT, () => {
   logger.info(`심심톡 실행 PORT: ${PORT}`);
