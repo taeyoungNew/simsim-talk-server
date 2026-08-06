@@ -13,7 +13,7 @@ import { errorHandler } from "./middlewares/errorHandler.middleware";
 import cors from "cors";
 import http from "http";
 import { setupSocket } from "./sockets/socket.index";
-import { connectElastic } from "./elasticsearch/elasticSearchTest";
+import { connectElastic } from "./elasticsearch/elasticSearchConnect";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
