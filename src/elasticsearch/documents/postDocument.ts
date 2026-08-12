@@ -1,5 +1,6 @@
+import { query } from "express";
 import { elasticClient } from "../../config/elasticClient";
-import { POST_INDEX_NAME } from "../mappings/postMapping";
+import { POST_INDEX_NAME, postIndexMapping } from "../mappings/postMapping";
 
 export interface PostDocument {
   id: number;
@@ -7,6 +8,29 @@ export interface PostDocument {
   content: string;
   createAt: Date | string;
 }
+
+export const initPostIndex = async () => {
+  try {
+    // 1. 'simsimtalk_posts' 인덱스가 이미 존재하는지 확인
+    const isExists = await elasticClient.indices.exists({
+      index: POST_INDEX_NAME,
+    });
+
+    // 없을때만 생성
+    if (!isExists) {
+      await elasticClient.indices.create(postIndexMapping);
+      console.log(
+        `✅ [Elasticsearch] '${POST_INDEX_NAME}' 인덱스가 생성되었습니다.`,
+      );
+    } else {
+      console.log(
+        `ℹ️ [Elasticsearch] '${POST_INDEX_NAME}' 인덱스가 이미 존재합니다.`,
+      );
+    }
+  } catch (error) {
+    console.error("❌ [Elasticsearch] 인덱스 초기화 에러:", error);
+  }
+};
 
 // 1. 게시물 색인 (생성 및 전체 덮어쓰기)
 export const indexPostDocument = async (post: PostDocument) => {
@@ -45,17 +69,15 @@ export const searchPostsDocument = async (
 ) => {
   const from = (page - 1) * size;
 
+  const query = keyword.trim()
+    ? { match: { content: { query: keyword } } }
+    : { match_all: {} };
+
   const response = await elasticClient.search<PostDocument>({
     index: POST_INDEX_NAME,
     from,
     size,
-    query: {
-      match: {
-        content: {
-          query: keyword,
-        },
-      },
-    },
+    query,
     sort: [
       { createAt: { order: "desc" } }, // 최신순 정렬
     ],

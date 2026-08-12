@@ -1,6 +1,8 @@
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.2
+    build:
+      context: .
+      dockerfile: Dockerfile.elasticsearch
     container_name: simsimtalk-elasticsearch
     environment:
       - discovery.type=single-node

@@ -47,8 +47,11 @@ export const postIndexMapping: IndicesCreateRequest = {
   mappings: {
     properties: {
       id: { type: "integer" },
-      userId: { type: "text" },
-      content: { type: "text" },
+      userId: { type: "keyword" },
+      content: {
+        type: "text",
+        analyzer: "korean_analyzer",
+      },
       createAt: { type: "date" },
     },
   },
