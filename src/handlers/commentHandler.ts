@@ -36,15 +36,14 @@ class CommentHandler {
     res: Response,
     next: NextFunction,
   ) => {
+    logger.info("", {
+      method: "post",
+      url: "api/comment/:postId",
+      layer: "Handlers",
+      className: "CommentHandler",
+      functionName: "createComent",
+    });
     try {
-      logger.info("", {
-        method: "post",
-        url: "api/comment/:postId",
-        layer: "Handlers",
-        className: "CommentHandler",
-        functionName: "createComent",
-      });
-
       // 유저의 id가져오기
       const userId = res.locals.userInfo.userId;
       const postId = req.params.postId;

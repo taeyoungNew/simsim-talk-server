@@ -12,6 +12,7 @@ import messageAlarmRouter from "./messageAlarmRouter";
 import userRelationRouter from "./userRelationRouter";
 import alarmRouter from "./alarmRouter";
 import suggestedUserRouter from "./suggestedUserRouter";
+import elasticSearchRouter from "./searchRouter";
 
 const router = express.Router();
 
@@ -28,5 +29,6 @@ router.use("/message-alarm", messageAlarmRouter);
 router.use("/user-relation", userRelationRouter);
 router.use("/alarms", alarmRouter);
 router.use("/suggested-user", suggestedUserRouter);
+router.use("/elastic-search", elasticSearchRouter);
 
 export default router;

@@ -14,12 +14,12 @@ class MessageAlarmsRepository {
     messageId,
     userId,
   }: SaveMsgAlarmEntity) => {
+    logger.info("", {
+      layer: "Repository",
+      className: "MessageAlarmsRepository",
+      functionName: "saveAlarm",
+    });
     try {
-      logger.info("", {
-        layer: "Repository",
-        className: "MessageAlarmsRepository",
-        functionName: "saveAlarm",
-      });
       return await MessageAlarms.create({
         userId,
         chatRoomId,
