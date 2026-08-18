@@ -1,8 +1,7 @@
 import logger from "../config/logger";
-import ElasticSearchRepository from "../repositories/elasticSearchRepository";
+import { searchPostsDocument } from "../elasticsearch/documents/postDocument";
 
 class ElasticSearchService {
-  private elasticSearchRepository = new ElasticSearchRepository();
   public searchMainPage = async (keyword: string) => {
     logger.info("", {
       method: "post",
@@ -12,14 +11,10 @@ class ElasticSearchService {
       functionName: "createComent",
     });
     try {
-      const [posts, users] = await Promise.all([
-        this.elasticSearchRepository.searchPosts(keyword),
-        this.elasticSearchRepository.searchUsers(keyword),
-      ]);
+      const [posts] = await Promise.all([searchPostsDocument(keyword)]);
 
       return {
         posts,
-        users,
       };
     } catch (error) {
       throw error;

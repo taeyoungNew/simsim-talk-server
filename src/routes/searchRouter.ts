@@ -6,7 +6,7 @@ const elasticSearchHandler = new ElasticSearchHandler();
 
 // 메인페이지에서 검색
 elasticSearchRouter.get(
-  "/search-mainpage",
+  "/search-mainpage?keyword=:",
   elasticSearchHandler.searchMainPage,
 );
 

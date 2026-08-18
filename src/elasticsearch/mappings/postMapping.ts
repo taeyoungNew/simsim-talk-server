@@ -1,11 +1,8 @@
-import {
-  IndicesAddBlockRequest,
-  IndicesCreateRequest,
-} from "@elastic/elasticsearch/lib/api/types";
+import {} from "@elastic/elasticsearch";
 
 export const POST_INDEX_NAME = "simsimtalk_posts";
 
-export const postIndexMapping: IndicesCreateRequest = {
+export const postIndexMapping = {
   index: POST_INDEX_NAME,
 
   settings: {
