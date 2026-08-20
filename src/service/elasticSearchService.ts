@@ -2,13 +2,12 @@ import logger from "../config/logger";
 import { searchPostsDocument } from "../elasticsearch/documents/postDocument";
 
 class ElasticSearchService {
-  public searchMainPage = async (keyword: string) => {
+  public globalSearch = async (keyword: string) => {
     logger.info("", {
-      method: "post",
-      url: "api/comment/:postId",
-      layer: "Handlers",
-      className: "CommentHandler",
-      functionName: "createComent",
+      method: "get",
+      layer: "Service",
+      className: "ElasticSearchService",
+      functionName: "globalSearch",
     });
     try {
       const [posts] = await Promise.all([searchPostsDocument(keyword)]);

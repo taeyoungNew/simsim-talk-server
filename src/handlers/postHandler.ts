@@ -156,7 +156,7 @@ class PostHandler {
       console.timeEnd("after-db");
       // 첫랜더링
       if (ids.length === 0) {
-        result = await this.postService.getAllPosts({ userId });
+        result = await this.postService.getAllPosts();
 
         await this.cachePosts(result);
         let posts;
@@ -266,7 +266,7 @@ class PostHandler {
 
       // 그전에 레디스에 데이터들이 있는지 확인
       if (ids.length === 0) {
-        const result = await this.postService.getAllPosts(userId);
+        const result = await this.postService.getAllPosts();
 
         await this.cachePosts(result);
       }
@@ -496,7 +496,7 @@ class PostHandler {
       };
 
       if (ids.length === 0) {
-        const result = await this.postService.getAllPosts(userId);
+        const result = await this.postService.getAllPosts();
         await this.cachePosts(result);
       } else {
         // 해당 삭제할 게시물의 id값을 없앤 posts:list로 덮어쓰기

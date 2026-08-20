@@ -123,7 +123,7 @@ class PostService {
     }
   };
   // 게시물 모두조회
-  public getAllPosts = async (params: GetAllPostDto) => {
+  public getAllPosts = async () => {
     try {
       logger.info("", {
         layer: "Service",

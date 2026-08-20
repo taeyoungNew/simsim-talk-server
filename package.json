@@ -12,7 +12,8 @@
     "db:create": "node -r ts-node/register ./node_modules/.bin/sequelize-cli db:create",
     "db:migrate": "node -r ts-node/register ./node_modules/.bin/sequelize-cli db:migrate",
     "db:up": "docker-compose up -d",
-    "sequelize": "ts-node -r tsconfig-paths/register ./node_modules/.bin/sequelize-cli"
+    "sequelize": "ts-node -r tsconfig-paths/register ./node_modules/.bin/sequelize-cli",
+    "sync:es": "ts-node src/elasticsearch/scripts/syncElastic.ts"
   },
   "keywords": [],
   "author": "",

@@ -69,8 +69,15 @@ export const searchPostsDocument = async (
 ) => {
   const from = (page - 1) * size;
 
-  const query = keyword.trim()
-    ? { match: { content: { query: keyword } } }
+  const cleanKeyword = keyword.trim();
+
+  const query = cleanKeyword
+    ? {
+        multi_match: {
+          query: cleanKeyword,
+          fields: ["content^2", "content.ngram"],
+        },
+      }
     : { match_all: {} };
 
   const response = await elasticClient.search<PostDocument>({
