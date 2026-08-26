@@ -1,4 +1,4 @@
-import {} from "@elastic/elasticsearch";
+import {} from "@elastic/elasticsearch/";
 
 export const POST_INDEX_NAME = "simsimtalk_posts";
 
@@ -6,6 +6,8 @@ export const postIndexMapping = {
   index: POST_INDEX_NAME,
 
   settings: {
+    // 💡 [핵심] max_gram(10)과 min_gram(1)의 차이 허용치를 10으로 늘려줍니다.
+    max_ngram_diff: 10,
     analysis: {
       tokenizer: {
         nori_user_dict: {
@@ -51,6 +53,12 @@ export const postIndexMapping = {
           tokenizer: "custom_ngram_tokenizer",
           filter: ["lowercase"],
         },
+        // 💡 [추가] 검색어를 쪼개지 않고 소문자 변환만 수행하는 분석기 정의
+        lowercase_analyzer: {
+          type: "custom",
+          tokenizer: "keyword",
+          filter: ["lowercase"],
+        },
       },
     },
   },
@@ -65,7 +73,7 @@ export const postIndexMapping = {
           ngram: {
             type: "text",
             analyzer: "ngram_analyzer", // 색인할 때: 글자를 조각내서 저장
-            search_analyzer: "lowercase", // 💡 검색할 때: 검색어를 쪼개지 않고 검색
+            search_analyzer: "lowercase_analyzer", // 💡 검색할 때: 검색어를 쪼개지 않고 검색
           },
         },
       },

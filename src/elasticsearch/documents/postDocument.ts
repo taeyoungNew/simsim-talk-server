@@ -28,7 +28,11 @@ export const initPostIndex = async () => {
       );
     }
   } catch (error) {
-    console.error("❌ [Elasticsearch] 인덱스 초기화 에러:", error);
+    console.error(
+      "❌ [Elasticsearch] 인덱스 초기화 실패 (벌크 작업을 중단합니다):",
+      error,
+    );
+    throw error;
   }
 };
 
